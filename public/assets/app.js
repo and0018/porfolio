@@ -69,18 +69,20 @@
   }
 
   function hydrateSocial(anchor, url, label) {
-    if (!anchor) return;
+    if (!anchor) return false;
     if (url) {
       anchor.href = url;
       anchor.target = "_blank";
       anchor.rel = "noopener noreferrer";
       anchor.textContent = label;
       anchor.removeAttribute("aria-disabled");
-    } else {
-      anchor.removeAttribute("href");
-      anchor.setAttribute("aria-disabled", "true");
-      anchor.textContent = `${label} (em breve)`;
+      anchor.hidden = false;
+      return true;
     }
+    anchor.removeAttribute("href");
+    anchor.removeAttribute("aria-disabled");
+    anchor.hidden = true;
+    return false;
   }
 
   /* ---------------------------------------------------------------------- */
@@ -156,8 +158,15 @@
       }
     }
 
-    hydrateSocial($("#footerTiktok"), settings.tiktok, "TikTok");
-    hydrateSocial($("#footerInstagram"), settings.instagram, "Instagram");
+    const hasTiktok = hydrateSocial($("#footerTiktok"), settings.tiktok, "TikTok");
+    const hasInstagram = hydrateSocial($("#footerInstagram"), settings.instagram, "Instagram");
+
+    const socialColumn = $("#footerSocial");
+    if (socialColumn) {
+      const hasSocial = hasTiktok || hasInstagram || Boolean(settings.email);
+      socialColumn.hidden = !hasSocial;
+      socialColumn.closest(".footer-top")?.classList.toggle("no-social", !hasSocial);
+    }
 
     const year = new Date().getFullYear();
     $$("[data-year]").forEach((element) => {

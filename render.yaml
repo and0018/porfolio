@@ -2,7 +2,7 @@ services:
   - type: web
     name: vinicius-almeida-portfolio
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm ci
     startCommand: node server.js
     healthCheckPath: /healthz
@@ -15,11 +15,7 @@ services:
         generateValue: true
       - key: SITE_URL
         sync: false
-      - key: DATA_DIR
-        value: /var/data
-      - key: UPLOAD_DIR
-        value: /var/data/uploads
-    disk:
-      name: portfolio-data
-      mountPath: /var/data
-      sizeGB: 1
+      # Postgres externo (Neon, Supabase, etc.). No Render Free o disco é
+      # apagado a cada restart; o banco mantém projetos e imagens.
+      - key: DATABASE_URL
+        sync: false

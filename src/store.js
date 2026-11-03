@@ -7,9 +7,10 @@ export class Store {
     this.file = file;
     this.seedFactory = seedFactory;
     this.db = null;
+    this.kind = "file";
   }
 
-  load() {
+  async load() {
     fs.mkdirSync(path.dirname(this.file), { recursive: true });
 
     if (fs.existsSync(this.file)) {
@@ -20,11 +21,11 @@ export class Store {
         fs.copyFileSync(this.file, backup);
         console.error(`Banco de dados inválido. Backup salvo em ${backup}`);
         this.db = this.seedFactory();
-        this.save();
+        await this.save();
       }
     } else {
       this.db = this.seedFactory();
-      this.save();
+      await this.save();
     }
 
     // Compatibilidade com versões futuras: garante que novas chaves existam.
@@ -37,14 +38,15 @@ export class Store {
   }
 
   get data() {
-    if (!this.db) this.load();
+    if (!this.db) throw new Error("Banco de dados ainda não foi carregado.");
     return this.db;
   }
 
-  save() {
+  async save() {
     const tmp = `${this.file}.${process.pid}.tmp`;
     fs.writeFileSync(tmp, JSON.stringify(this.db, null, 2), "utf8");
     fs.renameSync(tmp, this.file);
+    return this.db;
   }
 
   get settings() {
@@ -69,31 +71,31 @@ export class Store {
     return this.works.find((work) => work.id === id) || null;
   }
 
-  addWork(work) {
+  async addWork(work) {
     this.data.works.push(work);
-    this.save();
+    await this.save();
     return work;
   }
 
-  updateWork(id, patch) {
+  async updateWork(id, patch) {
     const index = this.works.findIndex((work) => work.id === id);
     if (index === -1) return null;
     this.data.works[index] = { ...this.data.works[index], ...patch };
-    this.save();
+    await this.save();
     return this.data.works[index];
   }
 
-  removeWork(id) {
+  async removeWork(id) {
     const index = this.works.findIndex((work) => work.id === id);
     if (index === -1) return null;
     const [removed] = this.data.works.splice(index, 1);
-    this.save();
+    await this.save();
     return removed;
   }
 
-  updateSettings(patch) {
+  async updateSettings(patch) {
     this.data.settings = { ...this.data.settings, ...patch };
-    this.save();
+    await this.save();
     return this.data.settings;
   }
 
@@ -101,13 +103,27 @@ export class Store {
     return this.works.reduce((max, work) => Math.max(max, Number(work.order) || 0), 0) + 1;
   }
 
-  reorder(ids) {
+  async reorder(ids) {
     const positions = new Map(ids.map((id, index) => [id, index + 1]));
     this.data.works = this.works.map((work) => ({
       ...work,
       order: positions.has(work.id) ? positions.get(work.id) : work.order,
     }));
-    this.save();
+    await this.save();
     return this.sortedWorks();
   }
+
+  async persistFile(_file) {
+    /* O arquivo já está no disco local. */
+  }
+
+  async getFile(_name) {
+    return null;
+  }
+
+  async deleteFile(_name) {
+    /* removeUpload() apaga o arquivo local. */
+  }
+
+  async close() {}
 }

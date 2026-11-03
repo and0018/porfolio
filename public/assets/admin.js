@@ -11,6 +11,7 @@
     services: [],
     usingDefaultPassword: false,
     demoCount: 0,
+    storage: {},
     tab: "overview",
     search: "",
     status: "all",
@@ -30,6 +31,8 @@
     saveState: $("#saveState"),
     sideCount: $("#sideCount"),
     passwordNotice: $("#passwordNotice"),
+    storageNotice: $("#storageNotice"),
+    storageNoticeText: $("#storageNoticeText"),
     demoNotice: $("#demoNotice"),
     demoCount: $("#demoCount"),
     stats: $("#stats"),
@@ -175,6 +178,7 @@
     state.categories = data.categories || {};
     state.usingDefaultPassword = Boolean(data.usingDefaultPassword);
     state.demoCount = Number(data.demoCount) || 0;
+    state.storage = data.storage || {};
     state.services = Array.isArray(state.settings.services)
       ? state.settings.services.map((service) => ({ ...service }))
       : [];
@@ -191,6 +195,13 @@
 
   function renderNotices() {
     if (elements.passwordNotice) elements.passwordNotice.hidden = !state.usingDefaultPassword;
+
+    if (elements.storageNotice) {
+      const warning = String(state.storage.warning || "").trim();
+      elements.storageNotice.hidden = !warning;
+      if (elements.storageNoticeText) elements.storageNoticeText.textContent = warning;
+    }
+
     if (elements.demoNotice) elements.demoNotice.hidden = state.demoCount === 0;
     if (elements.demoCount) elements.demoCount.textContent = String(state.demoCount);
   }

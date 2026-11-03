@@ -9,8 +9,8 @@ Resumo das opções:
 
 | Plataforma | Custo aproximado | Mantém o projeto como está? | Dados persistem? |
 | --- | --- | --- | --- |
+| Render Free + Postgres externo | US$ 0 | Sim | Sim |
 | Render com disco | ~US$ 7,25/mês | Sim | Sim |
-| Render Free | US$ 0 | Sim, com ressalvas | **Não** |
 | Railway Hobby | US$ 5/mês | Sim | Sim (volume) |
 | VPS + Docker | ~US$ 4–6/mês | Sim | Sim (volume) |
 | Netlify Free | US$ 0 | Não | Exigiria refatoração |
@@ -33,53 +33,60 @@ Você vai precisar de:
 - `ADMIN_PASSWORD` — senha forte do painel `/admin`.
 - `SESSION_SECRET` — o valor aleatório gerado acima.
 - `SITE_URL` — URL final do site, com `https://` e sem barra no final.
-- `DATA_DIR` / `UPLOAD_DIR` — pastas do disco persistente.
+- `DATABASE_URL` — connection string de um Postgres externo (grátis no Neon).
+- `DATA_DIR` / `UPLOAD_DIR` — apenas se você usar um disco persistente.
 
 Nunca comite `.env`, `data/db.json`, `data/*.txt` ou imagens enviadas. O
 `.gitignore` já cobre esses arquivos.
 
----
-
-## Opção 1 — Render com disco persistente (recomendado)
-
-O repositório já inclui `render.yaml` com disco de 1 GB em `/var/data`.
-
-1. Suba o código para o GitHub (veja o fim deste arquivo).
-2. No Render, escolha **New → Blueprint** e conecte o repositório.
-3. O Render lê o `render.yaml` e pede os valores de `ADMIN_PASSWORD` e
-   `SITE_URL`. Se ainda não tiver domínio, use a URL provisória
-   `https://<nome-do-servico>.onrender.com` e atualize depois.
-4. Confirme o disco `portfolio-data` montado em `/var/data`.
-5. Faça o primeiro deploy e acompanhe os logs até a mensagem
-   `Vinicius Almeida — portfólio`.
-
-O `render.yaml` usa `plan: starter` (serviço pago). Disco persistente **não
-existe no plano Free**.
-
-Depois do deploy:
-
-- Abra `https://seu-site/healthz` e confirme `{"ok":true}`.
-- Entre em `/admin` com a senha definida.
-- Faça um upload de teste e um redeploy. A imagem e os dados devem continuar lá.
+> **Se o repositório já foi público:** os arquivos `data/admin-password.txt` e
+> `data/password.txt` foram removidos do Git, mas a senha antiga deve ser
+> considerada vazada. Troque `ADMIN_PASSWORD` em todas as plataformas.
 
 ---
 
-## Opção 2 — Render Free (somente demonstração)
+## Opção 1 — Render Free + Postgres externo (recomendado para custo zero)
 
-Serve para mostrar o site, mas **não para uso real**: o sistema de arquivos é
-efêmero. A cada deploy, restart ou spin-down após 15 minutos ocioso, o Render
-recria o container e você perde `db.json` e os uploads.
+O plano Free do Render **não tem disco persistente**: a cada deploy, restart ou
+spin-down após 15 minutos ocioso, o container é recriado e você perde `db.json`
+e os uploads. A solução é guardar os dados fora do Render, em um Postgres
+gratuito.
 
-1. Render → **New → Web Service** → conecte o repositório.
-2. Runtime: **Node**. Build: `npm ci`. Start: `node server.js`.
-3. Health check: `/healthz`.
-4. Variáveis: `NODE_ENV=production`, `ADMIN_PASSWORD`, `SESSION_SECRET`,
-   `SITE_URL`. **Não** defina `DATA_DIR` nem `UPLOAD_DIR`.
-5. Não crie disco.
+1. Crie uma conta grátis no [Neon](https://neon.tech) (ou use Supabase/Railway).
+2. Crie um projeto/banco e copie a connection string, no formato
+   `postgresql://usuario:senha@host/banco?sslmode=require`.
+3. No Render, abra o serviço → **Environment** e adicione:
+   - `DATABASE_URL` = connection string do Neon;
+   - `ADMIN_PASSWORD` = senha forte do painel;
+   - `SESSION_SECRET` = o valor aleatório gerado acima;
+   - `SITE_URL` = URL pública, ex.: `https://seu-site.onrender.com`.
+4. Faça o redeploy. No primeiro start o app cria as tabelas
+   `portfolio_state` e `portfolio_files` automaticamente.
+5. Entre em `/admin`, crie um projeto e faça um restart do serviço. O projeto e
+   a imagem devem continuar lá.
 
-Se quiser manter um backup antes de cada deploy, use **Exportar backup** no
-painel. As imagens enviadas continuam sendo perdidas; capas de exemplo são
-regeneradas no próximo start.
+O `render.yaml` do repositório já está configurado para esse caminho
+(`plan: free` + `DATABASE_URL`). Se você estiver usando um serviço já criado,
+basta adicionar a variável no painel e fazer o redeploy.
+
+> O app também funciona com disco persistente (opção 2). Se `DATABASE_URL`
+> estiver definida, o Postgres tem prioridade.
+
+---
+
+## Opção 2 — Render com disco persistente (pago)
+
+Use o plano Starter e monte um disco em `/var/data`. O app detecta o disco
+automaticamente, mesmo sem `DATA_DIR`/`UPLOAD_DIR`, mas definir as variáveis é
+mais explícito:
+
+1. Render → serviço → **Settings → Disks** → crie um disco de 1 GB em
+   `/var/data`.
+2. Em **Environment**, defina `DATA_DIR=/var/data` e
+   `UPLOAD_DIR=/var/data/uploads`. Remova `DATABASE_URL` se ela existir.
+3. Faça o redeploy e teste um upload + restart.
+
+Com disco, os dados ficam no próprio Render e não dependem de um banco externo.
 
 ---
 
@@ -197,8 +204,8 @@ invalidadas (basta entrar novamente).
 
 | Sintoma | Causa provável | Solução |
 | --- | --- | --- |
-| Dados voltam ao estado inicial | Sem disco persistente ou `DATA_DIR` fora do volume | Monte o disco e aponte `DATA_DIR`/`UPLOAD_DIR` para ele |
-| Imagens somem após deploy | `UPLOAD_DIR` em pasta efêmera | Mova para o volume persistente |
+| Dados voltam ao estado inicial | Sem disco persistente ou `DATA_DIR` fora do volume | No Free, configure `DATABASE_URL`; com disco, aponte `DATA_DIR`/`UPLOAD_DIR` para ele |
+| Imagens somem após deploy | `UPLOAD_DIR` em pasta efêmera | No Free, configure `DATABASE_URL`; com disco, mova para o volume persistente |
 | Login entra e volta para a tela de senha | Cookies `Secure` sem HTTPS ou proxy mal configurado | Acesse via HTTPS e mantenha `app.set("trust proxy", 1)` |
 | Erro 413 no upload | Proxy limitando o corpo da requisição | Aumente o limite no proxy (o app aceita 12 MB) |
 | Serviço reinicia sem parar | Porta errada ou falta de memória | Use `PORT` fornecida pela plataforma e confira os logs |

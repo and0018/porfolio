@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Store } from "./src/store.js";
+import { PostgresStore } from "./src/pg-store.js";
 import { buildSeed, CATEGORIES } from "./src/seed.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -12,16 +13,63 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const PORT = Number(process.env.PORT) || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
 const VIEWS_DIR = path.join(__dirname, "views");
-const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, "data"));
-const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(PUBLIC_DIR, "uploads"));
+
+// No Render, discos persistentes costumam ser montados em /var/data. Se o
+// serviço tiver um disco mas as variáveis não estiverem definidas, usa o disco.
+const DETECTED_DISK = (() => {
+  if (process.platform === "win32") return "";
+  try {
+    return fs.statSync("/var/data").isDirectory() ? "/var/data" : "";
+  } catch {
+    return "";
+  }
+})();
+
+const DATA_DIR = path.resolve(
+  process.env.DATA_DIR || (DETECTED_DISK || path.join(__dirname, "data"))
+);
+const UPLOAD_DIR = path.resolve(
+  process.env.UPLOAD_DIR ||
+    (DETECTED_DISK ? path.join(DETECTED_DISK, "uploads") : path.join(PUBLIC_DIR, "uploads"))
+);
 const SESSION_COOKIE = "va_session";
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-const store = new Store(path.join(DATA_DIR, "db.json"), () => buildSeed(UPLOAD_DIR));
-store.load();
+const seedFactory = () => buildSeed(UPLOAD_DIR);
+let store;
+let storeWarning = "";
+
+if (process.env.DATABASE_URL) {
+  const pgStore = new PostgresStore({
+    connectionString: process.env.DATABASE_URL,
+    localFile: path.join(DATA_DIR, "db.json"),
+    seedFactory,
+    uploadDir: UPLOAD_DIR,
+  });
+
+  try {
+    await pgStore.load();
+    store = pgStore;
+  } catch (error) {
+    console.error("Não foi possível usar o Postgres:", error.message);
+    storeWarning =
+      "A conexão com o banco (DATABASE_URL) falhou. Os dados estão no disco temporário e podem sumir.";
+    await pgStore.close().catch(() => {});
+    store = new Store(path.join(DATA_DIR, "db.json"), seedFactory);
+    await store.load();
+  }
+} else {
+  store = new Store(path.join(DATA_DIR, "db.json"), seedFactory);
+  await store.load();
+
+  if (process.env.RENDER === "true") {
+    storeWarning =
+      "Este serviço está no Render Free, que apaga o disco a cada restart. Configure DATABASE_URL para manter os projetos e imagens.";
+  }
+}
 
 /* -------------------------------------------------------------------------- */
 /*  Segredos e sessão                                                          */
@@ -157,7 +205,7 @@ function serializeJson(value) {
     .replace(/\u2029/g, "\\u2029");
 }
 
-function removeUpload(publicPath) {
+async function removeUpload(publicPath) {
   if (!publicPath || !String(publicPath).startsWith("/uploads/")) return;
   const filename = path.basename(String(publicPath));
   const target = path.join(UPLOAD_DIR, filename);
@@ -166,6 +214,11 @@ function removeUpload(publicPath) {
     fs.rmSync(target, { force: true });
   } catch (error) {
     console.warn("Não foi possível remover o arquivo:", target, error.message);
+  }
+  try {
+    await store.deleteFile(filename);
+  } catch (error) {
+    console.warn("Não foi possível remover o arquivo do banco:", filename, error.message);
   }
 }
 
@@ -274,12 +327,14 @@ async function buildWork(req, existing = null) {
 
     let cover = existing?.cover || "";
     if (uploadedCover) {
-      if (cover) removeUpload(cover);
+      if (cover) await removeUpload(cover);
       cover = uploadedCover;
     } else if (isTruthy(req.body.removeCover) && cover) {
-      removeUpload(cover);
+      await removeUpload(cover);
       cover = "";
     }
+
+    if (req.file) await store.persistFile(req.file);
 
     return {
       title,
@@ -296,12 +351,12 @@ async function buildWork(req, existing = null) {
       published: isTruthy(req.body.published),
     };
   } catch (error) {
-    if (uploadedCover) removeUpload(uploadedCover);
+    if (uploadedCover) await removeUpload(uploadedCover);
     throw error;
   }
 }
 
-function buildSettings(req, existing) {
+async function buildSettings(req, existing) {
   const limits = {
     siteName: 80,
     role: 50,
@@ -364,10 +419,11 @@ function buildSettings(req, existing) {
 
   let aboutPhoto = existing.aboutPhoto || "";
   if (req.file) {
-    if (aboutPhoto) removeUpload(aboutPhoto);
+    if (aboutPhoto) await removeUpload(aboutPhoto);
     aboutPhoto = `/uploads/${req.file.filename}`;
+    await store.persistFile(req.file);
   } else if (isTruthy(req.body.removeAboutPhoto) && aboutPhoto) {
-    removeUpload(aboutPhoto);
+    await removeUpload(aboutPhoto);
     aboutPhoto = "";
   }
   patch.aboutPhoto = aboutPhoto;
@@ -407,6 +463,22 @@ app.use(
     immutable: true,
   })
 );
+
+// Depois de um restart do Render Free o arquivo local some, mas a imagem
+// continua no Postgres. Este fallback serve a versão persistida.
+app.get("/uploads/:name", async (req, res, next) => {
+  try {
+    const name = path.basename(req.params.name);
+    if (!name || name !== req.params.name) return next();
+    const file = await store.getFile(name);
+    if (!file) return next();
+    res.setHeader("Content-Type", file.mime || "application/octet-stream");
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+    res.send(file.data);
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.use(
   express.static(PUBLIC_DIR, {
@@ -575,6 +647,11 @@ app.get("/api/admin/data", requireAdmin, (_req, res) => {
     categories: CATEGORIES,
     usingDefaultPassword,
     demoCount: works.filter((work) => work.demo).length,
+    storage: {
+      mode: store.kind,
+      persistent: store.kind === "postgres",
+      warning: storeWarning,
+    },
   });
 });
 
@@ -589,7 +666,7 @@ app.post("/api/admin/works", requireAdmin, uploadCover, async (req, res) => {
       createdAt: now,
       updatedAt: now,
     };
-    store.addWork(work);
+    await store.addWork(work);
     res.status(201).json({ work });
   } catch (error) {
     res.status(400).json({ error: error.message || "Não foi possível salvar o projeto." });
@@ -602,7 +679,7 @@ app.put("/api/admin/works/:id", requireAdmin, uploadCover, async (req, res) => {
 
   try {
     const data = await buildWork(req, existing);
-    const work = store.updateWork(existing.id, {
+    const work = await store.updateWork(existing.id, {
       ...data,
       ...(existing.demo ? { demo: false } : {}),
       updatedAt: new Date().toISOString(),
@@ -613,43 +690,59 @@ app.put("/api/admin/works/:id", requireAdmin, uploadCover, async (req, res) => {
   }
 });
 
-app.post("/api/admin/works/:id/status", requireAdmin, (req, res) => {
-  const existing = store.getWork(req.params.id);
-  if (!existing) return res.status(404).json({ error: "Projeto não encontrado." });
-  const work = store.updateWork(existing.id, {
-    published: isTruthy(req.body?.published),
-    ...(existing.demo ? { demo: false } : {}),
-    updatedAt: new Date().toISOString(),
-  });
-  res.json({ work });
+app.post("/api/admin/works/:id/status", requireAdmin, async (req, res) => {
+  try {
+    const existing = store.getWork(req.params.id);
+    if (!existing) return res.status(404).json({ error: "Projeto não encontrado." });
+    const work = await store.updateWork(existing.id, {
+      published: isTruthy(req.body?.published),
+      ...(existing.demo ? { demo: false } : {}),
+      updatedAt: new Date().toISOString(),
+    });
+    res.json({ work });
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Não foi possível atualizar o projeto." });
+  }
 });
 
-app.delete("/api/admin/works/:id", requireAdmin, (req, res) => {
-  const removed = store.removeWork(req.params.id);
-  if (!removed) return res.status(404).json({ error: "Projeto não encontrado." });
-  removeUpload(removed.cover);
-  res.json({ ok: true });
+app.delete("/api/admin/works/:id", requireAdmin, async (req, res) => {
+  try {
+    const removed = await store.removeWork(req.params.id);
+    if (!removed) return res.status(404).json({ error: "Projeto não encontrado." });
+    await removeUpload(removed.cover);
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Não foi possível excluir o projeto." });
+  }
 });
 
-app.post("/api/admin/works/reorder", requireAdmin, (req, res) => {
+app.post("/api/admin/works/reorder", requireAdmin, async (req, res) => {
   const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(String) : [];
   if (!ids.length) return res.status(400).json({ error: "Ordem inválida." });
-  res.json({ works: store.reorder(ids) });
-});
-
-app.post("/api/admin/works/clear-demo", requireAdmin, (req, res) => {
-  const demos = store.works.filter((work) => work.demo);
-  for (const work of demos) {
-    store.removeWork(work.id);
-    removeUpload(work.cover);
-  }
-  res.json({ ok: true, removed: demos.length });
-});
-
-app.put("/api/admin/settings", requireAdmin, uploadAboutPhoto, (req, res) => {
   try {
-    const patch = buildSettings(req, store.settings);
-    const settings = store.updateSettings(patch);
+    res.json({ works: await store.reorder(ids) });
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Não foi possível reordenar os projetos." });
+  }
+});
+
+app.post("/api/admin/works/clear-demo", requireAdmin, async (req, res) => {
+  try {
+    const demos = store.works.filter((work) => work.demo);
+    for (const work of demos) {
+      await store.removeWork(work.id);
+      await removeUpload(work.cover);
+    }
+    res.json({ ok: true, removed: demos.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message || "Não foi possível remover os exemplos." });
+  }
+});
+
+app.put("/api/admin/settings", requireAdmin, uploadAboutPhoto, async (req, res) => {
+  try {
+    const patch = await buildSettings(req, store.settings);
+    const settings = await store.updateSettings(patch);
     res.json({ settings });
   } catch (error) {
     res.status(400).json({ error: error.message || "Não foi possível salvar as configurações." });
@@ -682,6 +775,10 @@ app.listen(PORT, () => {
   console.log("  Vinicius Almeida — portfólio");
   console.log(`  Site:  http://localhost:${PORT}`);
   console.log(`  Admin: http://localhost:${PORT}/admin`);
+  console.log(
+    `  Dados: ${store.kind === "postgres" ? "Postgres (persistente)" : DATA_DIR}`
+  );
+  if (storeWarning) console.log(`  ⚠ ${storeWarning}`);
   if (usingDefaultPassword) {
     console.log(`  Senha padrão do admin: ${adminPassword}`);
     console.log("  ⚠ Defina ADMIN_PASSWORD antes de publicar o site.");

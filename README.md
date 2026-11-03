@@ -1,7 +1,8 @@
 # Vinicius Almeida — Designer & Motion
 
 Portfólio público com vitrine de projetos, player de TikTok integrado e um painel
-administrativo para publicar e editar o conteúdo — sem banco de dados externo.
+administrativo para publicar e editar o conteúdo — com persistência local em
+JSON ou em Postgres externo.
 
 - **Site:** apresenta os projetos publicados em uma galeria filtrável.
 - **Modal:** cada trabalho abre com descrição, metadados, link e CTA de contato.
@@ -57,6 +58,7 @@ npm start
 | `SITE_URL` | recomendada | URL pública (ex.: `https://viniciusalmeida.com`), usada em metatags, Open Graph, JSON-LD e sitemap. |
 | `DATA_DIR` | não | Pasta do `db.json` e dos segredos. Padrão: `./data`. |
 | `UPLOAD_DIR` | não | Pasta das imagens enviadas. Padrão: `./public/uploads`. |
+| `DATABASE_URL` | no Render Free | Postgres externo (Neon, Supabase, Railway) para manter projetos e imagens. |
 | `NODE_ENV` | não | Use `production` em produção. |
 
 Em produção com disco persistente, aponte as duas pastas para o disco:
@@ -66,9 +68,12 @@ DATA_DIR=/var/data
 UPLOAD_DIR=/var/data/uploads
 ```
 
-Sem disco persistente (ex.: plano gratuito do Render/Railway), **os projetos e
-as imagens enviadas são perdidos a cada deploy/restart**. Nesse caso, use o
-botão **Exportar backup** antes de publicar uma nova versão.
+No **Render Free não existe disco persistente**: o sistema de arquivos é
+apagado a cada restart/spin-down. Para não perder projetos e imagens, defina
+`DATABASE_URL` com um Postgres externo gratuito (recomendo o
+[Neon](https://neon.tech)). O app cria as tabelas sozinho no primeiro start e
+passa a guardar o `db.json` e as imagens no banco. Sem `DATABASE_URL`, o app
+continua usando arquivos locais.
 
 ---
 
@@ -110,7 +115,8 @@ site usam esse número.
 
 ```text
 server.js               Express, autenticação, uploads, APIs e SEO
-src/store.js            Persistência em JSON e ordenação dos projetos
+src/store.js            Persistência local em JSON e ordenação dos projetos
+src/pg-store.js         Persistência opcional em Postgres (DATABASE_URL)
 src/seed.js             Conteúdo inicial, categorias e capas SVG de exemplo
 public/index.html       Shell da página pública
 public/assets/          CSS e JavaScript do site
@@ -138,17 +144,23 @@ O projeto precisa de um processo Node contínuo e de um disco gravável. Ele **n
 funciona no Netlify como está**. O passo a passo completo por plataforma, com
 backup, restauração e solução de problemas, está em [`DEPLOY.md`](DEPLOY.md).
 
-### Render
+### Render (Free + Postgres externo)
 
-O `render.yaml` já descreve o serviço com disco persistente de 1 GB em
-`/var/data`. No Render:
+O plano Free do Render **não tem disco persistente**. O `render.yaml` já prepara
+o serviço no plano Free e espera uma `DATABASE_URL` externa.
 
-1. Crie um **Blueprint** a partir do repositório.
-2. Defina `ADMIN_PASSWORD` e `SITE_URL` quando solicitado.
-3. Confirme o disco `portfolio-data` (necessário para manter dados e uploads).
+1. Crie um Postgres gratuito no [Neon](https://neon.tech) (ou Supabase/Railway)
+   e copie a connection string (`postgresql://...?sslmode=require`).
+2. No Render, abra o serviço → **Environment** e adicione:
+   - `DATABASE_URL` = connection string do Neon;
+   - `ADMIN_PASSWORD` = senha forte do painel;
+   - `SESSION_SECRET` = valor aleatório (ou use o `generateValue` do Blueprint);
+   - `SITE_URL` = URL pública do site.
+3. Faça o redeploy. As tabelas são criadas automaticamente no primeiro start.
 
-O plano Free não inclui disco persistente: serve apenas como demonstração e
-perde dados e uploads a cada restart. Veja as ressalvas no `DEPLOY.md`.
+Se preferir um disco persistente em vez do banco externo, use o plano Starter e
+monte um disco em `/var/data` (o app detecta o disco automaticamente). Veja o
+`DEPLOY.md` para as duas opções.
 
 ### Docker / VPS
 
@@ -192,7 +204,8 @@ persistente em `/var/data` e defina `DATA_DIR=/var/data` e
 - [ ] Publicar o link do TikTok e o Instagram em **Configurações**.
 - [ ] Revisar WhatsApp, textos, serviços e SEO.
 - [ ] Testar login, upload, publicação e abertura de um vídeo no site.
-- [ ] Configurar disco persistente e testar um redeploy.
+- [ ] Configurar `DATABASE_URL` (Render Free) ou disco persistente e testar um
+      redeploy.
 
 ---
 
@@ -212,7 +225,8 @@ persistente em `/var/data` e defina `DATA_DIR=/var/data` e
 
 - As capas de exemplo são SVGs gerados no primeiro start e marcados com
   `demo: true`; ao editar um projeto de exemplo, a marcação é removida.
-- O conteúdo é salvo em `data/db.json` de forma atômica. Faça backups
-  periódicos do arquivo e da pasta de uploads.
+- O conteúdo é salvo em `data/db.json` de forma atômica (ou no Postgres quando
+  `DATABASE_URL` está definida). Faça backups periódicos do arquivo e da pasta
+  de uploads.
 - Se alterar CSS/JS, atualize o parâmetro `?v=` nas páginas para invalidar o
   cache dos navegadores.

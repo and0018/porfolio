@@ -13,7 +13,7 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..700;1,400..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/assets/admin.css?v=5" />
+    <link rel="stylesheet" href="/assets/admin.css?v=6" />
   </head>
 
   <body class="admin-body">
@@ -67,6 +67,13 @@
             <div>
               <strong>Você ainda está com a senha padrão.</strong>
               <p>Defina a variável <code>ADMIN_PASSWORD</code> no servidor antes de publicar o site.</p>
+            </div>
+          </div>
+
+          <div class="notice notice-warn" id="storageNotice" hidden>
+            <div>
+              <strong>Atenção: os dados podem sumir.</strong>
+              <p id="storageNoticeText"></p>
             </div>
           </div>
 
@@ -412,6 +419,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="/assets/admin.js?v=5" defer></script>
+    <script src="/assets/admin.js?v=6" defer></script>
   </body>
 </html>

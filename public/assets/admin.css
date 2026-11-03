@@ -1810,6 +1810,15 @@ body.locked {
   }
 }
 
+/* Evita o zoom automático do iOS ao focar campos no celular. */
+@media (max-width: 760px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
