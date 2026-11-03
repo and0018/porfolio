@@ -8,16 +8,21 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta name="theme-color" content="#F2F1E9" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --paper: #f4efe4;
-        --ink: #17140f;
-        --muted: #857d6f;
-        --clay: #cf5730;
+        --paper: #f2f1e9;
+        --paper-2: #e7e6da;
+        --ink: #15170f;
+        --ink-2: #3a3d30;
+        --muted: #626553;
+        --olive: #5e6547;
+        --military: #2f3a2b;
+        --line: rgba(21, 23, 15, 0.16);
       }
       * { box-sizing: border-box; }
       body {
@@ -28,72 +33,87 @@
         padding: 32px;
         background: var(--paper);
         color: var(--ink);
-        font-family: "Instrument Sans", Arial, sans-serif;
+        font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
       }
-      main { max-width: 760px; text-align: center; }
+      main { width: min(780px, 100%); }
+      .topline {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: clamp(48px, 9vh, 92px);
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+      }
       .mark {
-        width: 52px;
-        height: 52px;
-        margin: 0 auto 34px;
+        width: 40px;
+        height: 40px;
         display: grid;
         place-items: center;
-        border-radius: 14px;
-        background: var(--ink);
+        background: var(--military);
         color: var(--paper);
-        font-family: "Instrument Serif", Georgia, serif;
-        font-size: 22px;
-      }
-      p.kicker {
-        margin: 0 0 16px;
-        font-size: 10px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-      h1 {
-        margin: 0 0 18px;
-        font-family: "Instrument Serif", Georgia, serif;
-        font-weight: 400;
-        font-size: clamp(42px, 9vw, 88px);
-        line-height: 0.94;
+        font-family: "Bricolage Grotesque", "Archivo", sans-serif;
+        font-size: 16px;
+        font-weight: 600;
         letter-spacing: -0.04em;
       }
-      h1 em { color: var(--clay); font-style: italic; }
+      .topline span:last-child { margin-left: auto; }
+      p.kicker {
+        margin: 0 0 18px;
+        font-size: 12px;
+        color: var(--olive);
+      }
+      h1 {
+        max-width: 15ch;
+        margin: 0 0 24px;
+        font-family: "Bricolage Grotesque", "Archivo", sans-serif;
+        font-weight: 500;
+        font-size: clamp(46px, 8.4vw, 92px);
+        line-height: 0.92;
+        letter-spacing: -0.055em;
+      }
+      h1 em { color: var(--olive); font-style: normal; }
       p.sub {
-        max-width: 44ch;
-        margin: 0 auto 32px;
+        max-width: 46ch;
+        margin: 0 0 34px;
         font-size: 14px;
         line-height: 1.7;
-        color: var(--muted);
+        color: var(--ink-2);
       }
-      .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
       a {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 13px 20px;
-        border-radius: 999px;
+        padding: 14px 21px;
         font-size: 13px;
+        font-weight: 500;
         text-decoration: none;
-        transition: transform 0.2s, background 0.2s;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
       }
-      a:hover { transform: translateY(-2px); }
-      .primary { background: var(--ink); color: var(--paper); }
-      .primary:hover { background: var(--clay); }
-      .ghost { border: 1px solid rgba(23, 20, 15, 0.25); color: var(--ink); }
+      .primary { background: var(--military); color: var(--paper); }
+      .primary:hover { background: var(--ink); }
+      .ghost { border: 1px solid rgba(21, 23, 15, 0.32); color: var(--ink); }
+      .ghost:hover { border-color: var(--ink); background: var(--paper-2); }
     </style>
   </head>
   <body>
     <main>
-      <div class="mark">VA</div>
-      <p class="kicker">Erro 404</p>
+      <div class="topline">
+        <div class="mark">VA</div>
+        <span>Vinicius Almeida</span>
+        <span>Erro 404</span>
+      </div>
+
+      <p class="kicker">Fora de quadro</p>
       <h1>Essa página<br /><em>saiu de quadro.</em></h1>
       <p class="sub">
         O link que você tentou abrir não existe ou foi movido. Volte para a vitrine para ver os
         trabalhos mais recentes.
       </p>
       <div class="actions">
-        <a class="primary" href="/">Voltar ao site <span>↗</span></a>
+        <a class="primary" href="/">Voltar ao site</a>
         <a class="ghost" href="/#contato">Falar comigo</a>
       </div>
     </main>

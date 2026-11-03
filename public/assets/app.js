@@ -27,7 +27,6 @@
   const modalMedia = $("#modalMedia");
   const modalScroll = $(".modal-scroll", modal);
   const modalTitle = $("#modalTitle");
-  const modalKicker = $("#modalKicker");
   const modalDesc = $("#modalDesc");
   const modalMeta = $("#modalMeta");
   const modalActions = $("#modalActions");
@@ -80,7 +79,7 @@
     } else {
       anchor.removeAttribute("href");
       anchor.setAttribute("aria-disabled", "true");
-      anchor.textContent = `${label} — em breve`;
+      anchor.textContent = `${label} (em breve)`;
     }
   }
 
@@ -115,13 +114,9 @@
     const services = Array.isArray(settings.services) ? settings.services : [];
     if (servicesList) {
       servicesList.textContent = "";
-      services.forEach((service, index) => {
+      services.forEach((service) => {
         const row = document.createElement("div");
-        row.className = "service reveal";
-
-        const num = document.createElement("span");
-        num.className = "service-num";
-        num.textContent = String(index + 1).padStart(2, "0");
+        row.className = "service";
 
         const title = document.createElement("h3");
         title.textContent = service.title || "Serviço";
@@ -129,12 +124,7 @@
         const description = document.createElement("p");
         description.textContent = service.description || "";
 
-        const arrow = document.createElement("span");
-        arrow.className = "service-arrow";
-        arrow.setAttribute("aria-hidden", "true");
-        arrow.textContent = "↗";
-
-        row.append(num, title, description, arrow);
+        row.append(title, description);
         servicesList.append(row);
       });
     }
@@ -154,9 +144,6 @@
         { once: true }
       );
     }
-
-    const footerWord = $("#footerWord");
-    if (footerWord && settings.siteName) footerWord.dataset.word = settings.siteName.toUpperCase();
 
     const footerEmail = $("#footerEmail");
     if (footerEmail) {
@@ -211,10 +198,8 @@
     if (!heroMain || !heroMini) return;
 
     const featured = works.find((work) => work.featured) || works[0];
-    const videoWork = works.find((work) => work.category === "video" && work.id !== featured?.id) ||
-      works.find((work) => work.category === "video") ||
-      works[1] ||
-      featured;
+    const secondary = works.find((work) => work.category === "video" && work.id !== featured?.id) ||
+      works.find((work) => work.id !== featured?.id);
 
     if (!featured) {
       heroMain.disabled = true;
@@ -227,14 +212,18 @@
     $("#heroYear").textContent = featured.year || "2026";
     heroMain.addEventListener("click", () => openModal(featured.id, { push: true }));
 
-    if (!videoWork) {
+    if (!secondary) {
       heroMini.hidden = true;
       return;
     }
 
-    setImage($("#heroMiniImg"), $("#heroMiniFallback"), videoWork.cover, "");
-    $("#heroMiniTag").textContent = categoryLabel(videoWork.category);
-    heroMini.addEventListener("click", () => openModal(videoWork.id, { push: true }));
+    const isVideo = secondary.category === "video";
+
+    setImage($("#heroMiniImg"), $("#heroMiniFallback"), secondary.cover, "");
+    $("#heroMiniTag").textContent = categoryLabel(secondary.category);
+    $("#heroMiniLabel").textContent = `${isVideo ? "Abrir vídeo em destaque" : "Abrir projeto em destaque"}: ${secondary.title}`;
+    $(".hero-mini-play", heroMini).hidden = !isVideo;
+    heroMini.addEventListener("click", () => openModal(secondary.id, { push: true }));
   }
 
   /* ---------------------------------------------------------------------- */
@@ -268,17 +257,7 @@
       button.className = "chip" + (activeCategory === option.key ? " active" : "");
       button.dataset.category = option.key;
       button.setAttribute("aria-pressed", String(activeCategory === option.key));
-
-      const label = document.createElement("span");
-      label.style.fontFamily = "inherit";
-      label.style.fontSize = "inherit";
-      label.style.opacity = "1";
-      label.textContent = option.label;
-
-      const count = document.createElement("span");
-      count.textContent = String(option.count).padStart(2, "0");
-
-      button.append(label, count);
+      button.textContent = option.label;
       button.addEventListener("click", () => {
         activeCategory = option.key;
         renderFilters();
@@ -288,11 +267,10 @@
     }
   }
 
-  function buildCard(work, index) {
+  function buildCard(work) {
     const article = document.createElement("article");
     article.className = "work";
     article.dataset.cat = work.category;
-    article.style.setProperty("--i", String(Math.min(index, 10)));
 
     const button = document.createElement("button");
     button.type = "button";
@@ -330,12 +308,6 @@
     category.className = "work-cat";
     category.textContent = categoryLabel(work.category);
     media.append(category);
-
-    const open = document.createElement("span");
-    open.className = "work-open";
-    open.setAttribute("aria-hidden", "true");
-    open.textContent = "↗";
-    media.append(open);
 
     if (work.category === "video") {
       const play = document.createElement("span");
@@ -394,12 +366,12 @@
       empty.append(strong, text);
       gallery.append(empty);
     } else {
-      visibleWorks.forEach((work, index) => gallery.append(buildCard(work, index)));
+      visibleWorks.forEach((work) => gallery.append(buildCard(work)));
     }
 
     if (workCount) {
       const total = visibleWorks.length;
-      workCount.textContent = `${String(total).padStart(2, "0")} ${total === 1 ? "projeto" : "projetos"}`;
+      workCount.textContent = `${total} ${total === 1 ? "projeto" : "projetos"}`;
     }
   }
 
@@ -508,7 +480,7 @@
             work,
             "Este vídeo abre direto no TikTok.",
             work.tiktokUrl,
-            "Assistir no TikTok ↗"
+            "Assistir no TikTok"
           )
         );
       } else {
@@ -528,7 +500,6 @@
   }
 
   function renderModal(work) {
-    modalKicker.textContent = [categoryLabel(work.category), work.year].filter(Boolean).join(" · ");
     modalTitle.textContent = work.title;
 
     modalDesc.textContent = "";
@@ -592,10 +563,6 @@
         link.rel = "noopener noreferrer";
       }
       link.textContent = action.label;
-      const arrow = document.createElement("span");
-      arrow.className = "arr";
-      arrow.textContent = "↗";
-      link.append(arrow);
       modalActions.append(link);
     });
 
@@ -603,7 +570,7 @@
 
     const list = modalList.length ? modalList : works;
     const index = list.findIndex((item) => item.id === work.id);
-    modalIndex.textContent = `${String(index + 1).padStart(2, "0")} / ${String(list.length).padStart(2, "0")}`;
+    modalIndex.textContent = `${index + 1} de ${list.length}`;
     modalPrev.disabled = list.length < 2;
     modalNext.disabled = list.length < 2;
 
@@ -759,30 +726,6 @@
     });
   }
 
-  function setupReveal() {
-    const elements = $$(".reveal");
-    if (!elements.length) return;
-
-    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      elements.forEach((element) => element.classList.add("in"));
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -48px" }
-    );
-
-    elements.forEach((element) => observer.observe(element));
-  }
-
   function setupScroll() {
     let ticking = false;
 
@@ -869,7 +812,6 @@
   renderFilters();
   renderGallery();
   setupMenu();
-  setupReveal();
   setupScroll();
   setupModalEvents();
 

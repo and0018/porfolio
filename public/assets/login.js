@@ -43,7 +43,7 @@
     } catch (error) {
       showError(error.message || "Não foi possível entrar. Tente novamente.");
       button.disabled = false;
-      button.textContent = "Entrar →";
+      button.textContent = "Entrar";
       form.querySelector('input[name="password"]')?.select();
     }
   });

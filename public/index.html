@@ -6,7 +6,7 @@
     <title>__SITE_TITLE__</title>
     <meta name="description" content="__SITE_DESC__" />
     <link rel="canonical" href="__SITE_URL__" />
-    <meta name="theme-color" content="#F4EFE4" />
+    <meta name="theme-color" content="#F2F1E9" />
     <meta name="color-scheme" content="light" />
 
     <meta property="og:type" content="website" />
@@ -24,10 +24,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..700;1,400..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/assets/styles.css?v=3" />
+    <link rel="stylesheet" href="/assets/styles.css?v=5" />
     <script>
       document.documentElement.classList.add("js");
     </script>
@@ -58,7 +58,7 @@
 
         <div class="header-actions">
           <a class="btn btn-ink btn-sm header-cta" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">
-            Vamos conversar <span class="arr">↗</span>
+            Vamos conversar
           </a>
           <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menu">
             <span></span><span></span>
@@ -69,56 +69,54 @@
 
     <div class="mobile-menu" id="mobile-menu" hidden>
       <nav class="mobile-nav" aria-label="Menu">
-        <a href="#vitrine" data-menu-link><span>01</span> Vitrine</a>
-        <a href="#sobre" data-menu-link><span>02</span> Sobre</a>
-        <a href="#servicos" data-menu-link><span>03</span> Serviços</a>
-        <a href="#contato" data-menu-link><span>04</span> Contato</a>
+        <a href="#vitrine" data-menu-link>Vitrine</a>
+        <a href="#sobre" data-menu-link>Sobre</a>
+        <a href="#servicos" data-menu-link>Serviços</a>
+        <a href="#contato" data-menu-link>Contato</a>
       </nav>
       <div class="mobile-menu-foot">
         <a class="btn btn-ink" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">
-          Falar no WhatsApp <span class="arr">↗</span>
+          Falar no WhatsApp
         </a>
-        <p><span data-bind="availability">Disponível para novos projetos</span><br /><span data-bind="location">Brasil · projetos remotos</span></p>
+        <p><span data-bind="availability">Disponível para novos projetos</span><br /><span data-bind="location">Brasil, trabalho remoto</span></p>
       </div>
     </div>
 
     <main id="top">
       <section class="hero container">
         <div class="hero-copy">
-          <div class="hero-eyebrow reveal">
+          <div class="hero-eyebrow">
             <span class="status"><i></i><span data-bind="availability">Disponível para novos projetos</span></span>
-            <span class="hero-loc" data-bind="location">Brasil · projetos remotos</span>
+            <span class="hero-loc" data-bind="location">Brasil, trabalho remoto</span>
           </div>
 
-          <h1 class="hero-title reveal" style="--delay: 60ms">
+          <h1 class="hero-title">
             <span class="hero-title-lead" data-bind="heroTitleLead">Design que prende o olhar.</span>
             <span class="hero-title-accent" data-bind="heroTitleAccent">Movimento que fica.</span>
           </h1>
 
-          <p class="hero-sub reveal" style="--delay: 120ms" data-bind="heroSubtitle">
-            Sou Vinicius Almeida, designer e motion. Crio identidades, campanhas e conteúdo em movimento para marcas que querem ser vistas — e lembradas.
+          <p class="hero-sub" data-bind="heroSubtitle">
+            Sou Vinicius Almeida, designer e motion. Crio identidades, campanhas e conteúdo em movimento para marcas que querem ser vistas e lembradas.
           </p>
 
-          <div class="hero-actions reveal" style="--delay: 180ms">
+          <div class="hero-actions">
             <a class="btn btn-ink" href="#vitrine">
               <span data-bind="heroPrimaryCta">Ver a vitrine</span>
-              <span class="arr">↓</span>
             </a>
             <a class="btn btn-ghost" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">
               <span data-bind="heroSecondaryCta">Falar no WhatsApp</span>
-              <span class="arr">↗</span>
             </a>
           </div>
 
-          <div class="hero-foot reveal" style="--delay: 240ms">
+          <div class="hero-foot">
             <span>Identidade visual</span>
             <span>Motion</span>
             <span>Conteúdo</span>
-            <span class="hero-scroll">Role para ver <i>↓</i></span>
+            <span class="hero-scroll">Role para ver</span>
           </div>
         </div>
 
-        <div class="hero-visual reveal" style="--delay: 120ms">
+        <div class="hero-visual">
           <div class="hero-frame" aria-hidden="true"></div>
 
           <button class="hero-main" id="heroMain" type="button">
@@ -131,49 +129,24 @@
             </span>
             <span class="hero-main-bottom">
               <span class="hero-main-title" id="heroMainTitle">Projeto em destaque</span>
-              <span class="hero-arrow">↗</span>
             </span>
           </button>
 
           <button class="hero-mini" id="heroMini" type="button">
-            <span class="sr-only">Abrir vídeo em destaque: </span>
+            <span class="sr-only" id="heroMiniLabel">Abrir vídeo em destaque: </span>
             <span class="media-fallback" id="heroMiniFallback" aria-hidden="true"><span>▶</span></span>
             <img id="heroMiniImg" alt="" hidden />
             <span class="hero-mini-tag" id="heroMiniTag">Vídeo</span>
             <span class="hero-mini-play" aria-hidden="true">▶</span>
           </button>
-
-          <div class="hero-sticker" aria-hidden="true">
-            <svg viewBox="0 0 120 120" class="sticker-text">
-              <defs>
-                <path id="stickerCircle" d="M60,60 m-43,0 a43,43 0 1,1 86,0 a43,43 0 1,1 -86,0" />
-              </defs>
-              <text>
-                <textPath href="#stickerCircle" startOffset="0">DISPONÍVEL PARA PROJETOS • DESIGN &amp; MOTION • </textPath>
-              </text>
-            </svg>
-            <span class="sticker-star">✳</span>
-          </div>
         </div>
       </section>
 
-      <div class="marquee" aria-hidden="true">
-        <div class="marquee-track">
-          <div class="marquee-group">
-            <span>Motion design</span><i>✳</i><span>Direção de arte</span><i>✳</i><span>Identidade visual</span><i>✳</i><span>Conteúdo</span><i>✳</i><span>TikTok</span><i>✳</i><span>Instagram</span><i>✳</i>
-          </div>
-          <div class="marquee-group">
-            <span>Motion design</span><i>✳</i><span>Direção de arte</span><i>✳</i><span>Identidade visual</span><i>✳</i><span>Conteúdo</span><i>✳</i><span>TikTok</span><i>✳</i><span>Instagram</span><i>✳</i>
-          </div>
-        </div>
-      </div>
-
       <section class="section vitrine" id="vitrine">
         <div class="container">
-          <div class="section-head reveal">
+          <div class="section-head">
             <div>
-              <p class="eyebrow">01 / Vitrine</p>
-              <h2>Trabalhos que falam <em>por si</em>.</h2>
+              <h2>Trabalhos que falam por si.</h2>
             </div>
             <div class="section-head-side">
               <p>Vídeos, artes e projetos selecionados. Clique em qualquer peça para abrir e ver de perto.</p>
@@ -181,7 +154,7 @@
             </div>
           </div>
 
-          <div class="filters reveal" id="filters" role="group" aria-label="Filtrar trabalhos"></div>
+          <div class="filters" id="filters" role="group" aria-label="Filtrar trabalhos"></div>
 
           <div class="gallery" id="gallery" aria-live="polite"></div>
 
@@ -193,7 +166,7 @@
 
       <section class="about" id="sobre">
         <div class="container about-grid">
-          <div class="about-media reveal">
+          <div class="about-media">
             <div class="about-photo" id="aboutPhotoWrap">
               <img id="aboutPhoto" alt="Retrato de Vinicius Almeida" hidden />
               <div class="photo-fallback" id="aboutPhotoFallback" aria-hidden="true">
@@ -202,14 +175,9 @@
                 <span class="pf-label">Designer<br />&amp; Motion</span>
               </div>
             </div>
-            <div class="about-stamp" aria-hidden="true">
-              <span class="stamp-mark" data-bind="monogram">VA</span>
-              <span>Estúdio</span>
-            </div>
           </div>
 
-          <div class="about-copy reveal">
-            <p class="eyebrow">02 / Sobre</p>
+          <div class="about-copy">
             <h2 class="about-quote">
               <span data-bind="aboutQuote">Bom design não grita.</span>
               <em data-bind="aboutQuoteAccent">Ele faz você olhar de novo.</em>
@@ -233,30 +201,28 @@
 
       <section class="section services" id="servicos">
         <div class="container">
-          <div class="section-head reveal">
+          <div class="section-head">
             <div>
-              <p class="eyebrow">03 / Serviços</p>
-              <h2>Do conceito ao <em>frame final</em>.</h2>
+              <h2>Do conceito ao frame final.</h2>
             </div>
             <div class="section-head-side">
-              <p>Você traz a ideia, eu organizo o caminho. Cada projeto é feito do tamanho do que ele precisa ser — sem fórmula pronta.</p>
+              <p>Você traz a ideia, eu organizo o caminho. Cada projeto é feito do tamanho do que ele precisa ser, sem fórmula pronta.</p>
             </div>
           </div>
 
           <div class="services-list" id="servicesList"></div>
 
-          <div class="services-cta reveal">
+          <div class="services-cta">
             <p>Não sabe em qual serviço seu projeto se encaixa?</p>
             <a class="link-arrow" data-wa data-wa-message="Oi, Vinicius! Não sei exatamente qual serviço preciso, mas quero conversar sobre um projeto.">
-              Me conta a ideia <span>→</span>
+              Me conta a ideia
             </a>
           </div>
         </div>
       </section>
 
       <section class="cta" id="contato">
-        <div class="container cta-inner reveal">
-          <p class="eyebrow eyebrow-light">04 / Contato</p>
+        <div class="container cta-inner">
           <h2>
             <span data-bind="ctaTitle">Tem uma ideia que ainda</span>
             <em data-bind="ctaAccent">não tem forma?</em>
@@ -266,7 +232,7 @@
           </p>
           <div class="cta-actions">
             <a class="btn btn-paper" data-wa data-wa-message="Oi, Vinicius! Quero tirar uma ideia do papel. Podemos conversar?">
-              Falar no WhatsApp <span class="arr">↗</span>
+              Falar no WhatsApp
             </a>
             <span class="cta-note"><i></i><span data-bind="ctaNote">Resposta em até 1 dia útil</span></span>
           </div>
@@ -285,7 +251,7 @@
                 <span class="brand-role" data-bind="role">Designer &amp; Motion</span>
               </span>
             </a>
-            <p data-bind="footerNote">Design, arte e movimento para marcas que querem ser vistas — e lembradas.</p>
+            <p data-bind="footerNote">Design, arte e movimento para marcas que querem ser vistas e lembradas.</p>
             <p class="footer-status"><i></i><span data-bind="availability">Disponível para novos projetos</span></p>
           </div>
 
@@ -308,15 +274,13 @@
             <h3>Contato</h3>
             <a data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">WhatsApp</a>
             <span class="footer-muted" data-bind="whatsappDisplay">+55 95 98413-0864</span>
-            <span class="footer-muted" data-bind="location">Brasil · projetos remotos</span>
+            <span class="footer-muted" data-bind="location">Brasil, trabalho remoto</span>
           </div>
         </div>
 
-        <div class="footer-word" id="footerWord" data-word="VINICIUS ALMEIDA" aria-hidden="true"></div>
-
         <div class="footer-bottom">
           <span>© __YEAR__ <span data-bind="siteName">Vinicius Almeida</span>. Todos os direitos reservados. __ADMIN_LINK__</span>
-          <span class="footer-credit">Feito com intenção <span aria-hidden="true">✳</span></span>
+          <span class="footer-credit">Feito com intenção</span>
           <a href="#top" class="back-top">Voltar ao topo ↑</a>
         </div>
       </div>
@@ -325,7 +289,6 @@
     <a class="wa-float" id="waFloat" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto." aria-label="Falar no WhatsApp">
       <span class="wa-dot"></span>
       <span class="wa-text">Falar no WhatsApp</span>
-      <span class="arr">↗</span>
     </a>
 
     <div class="modal" id="modal" hidden>
@@ -335,7 +298,6 @@
         <div class="modal-media" id="modalMedia"></div>
         <div class="modal-content">
           <div class="modal-scroll">
-            <p class="eyebrow" id="modalKicker">Projeto</p>
             <h2 class="modal-title" id="modalTitle">Projeto</h2>
             <div class="modal-desc" id="modalDesc"></div>
             <dl class="modal-meta" id="modalMeta"></dl>
@@ -343,7 +305,7 @@
           </div>
           <div class="modal-nav">
             <button type="button" id="modalPrev">← Anterior</button>
-            <span id="modalIndex">1 / 1</span>
+            <span id="modalIndex">1 de 1</span>
             <button type="button" id="modalNext">Próximo →</button>
           </div>
         </div>
@@ -351,6 +313,6 @@
     </div>
 
     <script type="application/json" id="boot">__BOOTSTRAP__</script>
-    <script src="/assets/app.js?v=3" defer></script>
+    <script src="/assets/app.js?v=5" defer></script>
   </body>
 </html>

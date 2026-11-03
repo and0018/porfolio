@@ -27,7 +27,6 @@
     tabs: $$(".side-link[data-tab]"),
     panels: $$(".tab-panel"),
     pageTitle: $("#pageTitle"),
-    pageEyebrow: $("#pageEyebrow"),
     saveState: $("#saveState"),
     sideCount: $("#sideCount"),
     passwordNotice: $("#passwordNotice"),
@@ -50,7 +49,6 @@
     drawer: $("#workDrawer"),
     drawerPanel: $(".drawer-panel", $("#workDrawer")),
     drawerTitle: $("#drawerTitle"),
-    drawerEyebrow: $("#drawerEyebrow"),
     workForm: $("#workForm"),
     workTitle: $("#workTitle"),
     workCategory: $("#workCategory"),
@@ -289,7 +287,7 @@
       sub.className = "recent-sub";
       sub.textContent = [categoryLabel(work.category), work.published ? "Publicado" : "Rascunho", formatDate(work.updatedAt)]
         .filter(Boolean)
-        .join(" · ");
+        .join(", ");
       main.append(title, sub);
 
       const status = document.createElement("span");
@@ -371,7 +369,7 @@
       }
       const sub = document.createElement("div");
       sub.className = "work-sub";
-      sub.textContent = [work.client, work.year, formatDate(work.updatedAt)].filter(Boolean).join(" · ") || "Sem detalhes";
+      sub.textContent = [work.client, work.year, formatDate(work.updatedAt)].filter(Boolean).join(", ") || "Sem detalhes";
       main.append(title, sub);
 
       const category = document.createElement("span");
@@ -465,9 +463,9 @@
   /* ---------------------------------------------------------------------- */
 
   const tabMeta = {
-    overview: { title: "Visão geral", eyebrow: "Painel" },
-    projects: { title: "Projetos", eyebrow: "Vitrine" },
-    settings: { title: "Configurações", eyebrow: "Site" },
+    overview: { title: "Visão geral" },
+    projects: { title: "Projetos" },
+    settings: { title: "Configurações" },
   };
 
   function setTab(name) {
@@ -486,7 +484,6 @@
     });
 
     if (elements.pageTitle) elements.pageTitle.textContent = tabMeta[tab].title;
-    if (elements.pageEyebrow) elements.pageEyebrow.textContent = tabMeta[tab].eyebrow;
 
     history.replaceState(null, "", `#${tab}`);
   }
@@ -741,7 +738,6 @@
     state.removeCover = false;
 
     elements.workForm.reset();
-    elements.drawerEyebrow.textContent = work ? "Editar projeto" : "Novo projeto";
     elements.drawerTitle.textContent = work ? "Atualizar trabalho" : "Adicionar à vitrine";
     elements.saveWorkBtn.textContent = work ? "Salvar alterações" : "Salvar projeto";
 

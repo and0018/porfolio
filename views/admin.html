@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Painel do estúdio — Vinicius Almeida</title>
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#F4EFE4" />
+    <meta name="theme-color" content="#F2F1E9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..700;1,400..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/assets/admin.css?v=3" />
+    <link rel="stylesheet" href="/assets/admin.css?v=5" />
   </head>
 
   <body class="admin-body">
@@ -29,27 +29,22 @@
 
         <nav class="side-nav" aria-label="Painel">
           <button type="button" class="side-link active" data-tab="overview">
-            <span class="side-icon">◧</span>
             <span>Visão geral</span>
           </button>
           <button type="button" class="side-link" data-tab="projects">
-            <span class="side-icon">▤</span>
             <span>Projetos</span>
             <span class="side-count" id="sideCount">0</span>
           </button>
           <button type="button" class="side-link" data-tab="settings">
-            <span class="side-icon">⚙</span>
             <span>Configurações</span>
           </button>
         </nav>
 
         <div class="side-foot">
           <a class="side-link side-link-muted" href="/" target="_blank" rel="noopener">
-            <span class="side-icon">↗</span>
             <span>Ver site</span>
           </a>
           <button type="button" class="side-link side-link-muted" id="logoutBtn">
-            <span class="side-icon">⏻</span>
             <span>Sair</span>
           </button>
         </div>
@@ -58,7 +53,6 @@
       <main class="admin-main">
         <header class="admin-topbar">
           <div>
-            <p class="eyebrow" id="pageEyebrow">Painel</p>
             <h1 id="pageTitle">Visão geral</h1>
           </div>
           <div class="topbar-actions">
@@ -92,7 +86,7 @@
                 <h2>Últimos projetos</h2>
                 <p>O que está na vitrine agora.</p>
               </div>
-              <button type="button" class="link-btn" data-goto="projects">Ver todos →</button>
+              <button type="button" class="link-btn" data-goto="projects">Ver todos</button>
             </div>
             <div id="recentList" class="recent-list"></div>
           </div>
@@ -104,7 +98,7 @@
             </div>
             <div class="quick-buttons">
               <button type="button" class="btn-secondary" id="quickNew">Criar um projeto</button>
-              <a class="btn-secondary" href="/" target="_blank" rel="noopener">Abrir o site ↗</a>
+              <a class="btn-secondary" href="/" target="_blank" rel="noopener">Abrir o site</a>
               <a class="btn-secondary" href="/api/admin/export" id="exportBtn">Exportar backup</a>
             </div>
           </div>
@@ -155,7 +149,7 @@
                 </label>
                 <label class="field">
                   <span>Localização</span>
-                  <input name="location" maxlength="90" placeholder="Brasil · projetos remotos" />
+                  <input name="location" maxlength="90" placeholder="Brasil, trabalho remoto" />
                 </label>
               </div>
             </div>
@@ -165,11 +159,11 @@
               <p>A frase que recebe quem chega. Mantenha curta e com personalidade.</p>
               <div class="settings-grid">
                 <label class="field">
-                  <span>Título — primeira parte</span>
+                  <span>Primeira parte do título</span>
                   <input name="heroTitleLead" maxlength="120" placeholder="Design que prende o olhar." />
                 </label>
                 <label class="field">
-                  <span>Título — destaque em itálico</span>
+                  <span>Destaque em itálico</span>
                   <input name="heroTitleAccent" maxlength="120" placeholder="Movimento que fica." />
                 </label>
                 <label class="field full">
@@ -218,7 +212,7 @@
                   <label class="btn-secondary btn-sm" for="aboutPhotoInput">Escolher imagem</label>
                   <input type="file" id="aboutPhotoInput" accept="image/jpeg,image/png,image/webp,image/avif" hidden />
                   <button type="button" class="link-btn" id="clearAboutPhoto">Remover foto</button>
-                  <p>Proporção 4:5. JPG, PNG ou WEBP — a imagem é otimizada automaticamente.</p>
+                  <p>Proporção 4:5. JPG, PNG ou WEBP. A imagem é otimizada automaticamente.</p>
                 </div>
               </div>
             </div>
@@ -262,11 +256,11 @@
               <p>A última frase antes do contato e a assinatura do rodapé.</p>
               <div class="settings-grid">
                 <label class="field">
-                  <span>CTA — primeira parte</span>
+                  <span>Primeira parte da chamada</span>
                   <input name="ctaTitle" maxlength="120" placeholder="Tem uma ideia que ainda" />
                 </label>
                 <label class="field">
-                  <span>CTA — destaque em itálico</span>
+                  <span>Destaque em itálico</span>
                   <input name="ctaAccent" maxlength="120" placeholder="não tem forma?" />
                 </label>
                 <label class="field full">
@@ -308,7 +302,6 @@
       <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" tabindex="-1">
         <header class="drawer-head">
           <div>
-            <p class="eyebrow" id="drawerEyebrow">Novo projeto</p>
             <h2 id="drawerTitle">Adicionar à vitrine</h2>
           </div>
           <button type="button" class="icon-btn" id="closeDrawer" aria-label="Fechar editor">✕</button>
@@ -320,7 +313,7 @@
               <h3>Informações</h3>
               <label class="field">
                 <span>Título do trabalho *</span>
-                <input name="title" id="workTitle" required maxlength="110" placeholder="Ex.: Reel de lançamento — Coleção Vento" />
+                <input name="title" id="workTitle" required maxlength="110" placeholder="Ex.: Reel de lançamento da Coleção Vento" />
               </label>
               <div class="field-grid">
                 <label class="field">
@@ -350,7 +343,7 @@
                 <div class="dropzone-empty" id="coverEmpty">
                   <span class="dz-icon">↑</span>
                   <strong>Arraste uma capa ou clique para enviar</strong>
-                  <small>JPG, PNG, WEBP, AVIF ou GIF · até 12 MB</small>
+                  <small>JPG, PNG, WEBP, AVIF ou GIF, até 12 MB</small>
                 </div>
                 <div class="dropzone-preview" id="coverPreview" hidden>
                   <img id="coverPreviewImg" alt="Prévia da capa" />
@@ -419,6 +412,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="/assets/admin.js?v=3" defer></script>
+    <script src="/assets/admin.js?v=5" defer></script>
   </body>
 </html>

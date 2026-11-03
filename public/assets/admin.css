@@ -1,25 +1,29 @@
-/* ==========================================================================
-   Painel administrativo — Vinicius Almeida
+﻿/* ==========================================================================
+   Painel administrativo â€” Vinicius Almeida
    ========================================================================== */
 
 :root {
-  --paper: #f4efe4;
-  --paper-2: #ece5d6;
-  --paper-3: #fbf8f1;
-  --ink: #17140f;
-  --ink-2: #3f3a31;
-  --muted: #6f6758;
-  --line: rgba(23, 20, 15, 0.13);
-  --line-strong: rgba(23, 20, 15, 0.28);
-  --clay: #cf5730;
-  --clay-soft: #e98a66;
-  --green: #3b7a50;
-  --danger: #b64125;
-  --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
-  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --mono: "Courier New", ui-monospace, monospace;
+  --paper: #f2f1e9;
+  --paper-2: #e7e6da;
+  --paper-3: #faf9f3;
+  --ink: #15170f;
+  --ink-2: #3a3d30;
+  --muted: #626553;
+  --line: rgba(21, 23, 15, 0.14);
+  --line-strong: rgba(21, 23, 15, 0.32);
+  --olive: #5e6547;
+  --olive-soft: #aab18f;
+  --military: #2f3a2b;
+  --sage: #dce1cf;
+  --clay: #5e6547;
+  --clay-soft: #aab18f;
+  --green: #3f7a55;
+  --danger: #9c3a26;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Bricolage Grotesque", "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
-  --radius: 14px;
+  --radius: 0px;
 }
 
 *,
@@ -87,42 +91,18 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 400;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 10px;
-  font-size: 9.5px;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.eyebrow::before {
-  content: "";
-  width: 18px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.55;
-}
-
-.eyebrow-light {
-  color: rgba(251, 248, 241, 0.55);
 }
 
 code {
   padding: 2px 5px;
-  border-radius: 4px;
-  background: rgba(23, 20, 15, 0.08);
+  border-radius: 0;
+  background: rgba(21, 23, 15, 0.08);
   font-family: var(--mono);
   font-size: 11px;
 }
 
-/* botões ------------------------------------------------------------------ */
+/* botÃµes ------------------------------------------------------------------ */
 
 .btn-primary,
 .btn-secondary,
@@ -133,13 +113,12 @@ code {
   justify-content: center;
   gap: 8px;
   padding: 12px 18px;
-  border-radius: 999px;
+  border-radius: 0;
   font-size: 12.5px;
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
-  transition: background 0.22s, color 0.22s, border-color 0.22s, transform 0.22s var(--ease),
-    box-shadow 0.22s;
+  transition: background 0.22s, color 0.22s, border-color 0.22s;
 }
 
 .btn-primary {
@@ -149,8 +128,6 @@ code {
 
 .btn-primary:hover {
   background: var(--clay);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 24px -14px rgba(207, 87, 48, 0.7);
 }
 
 .btn-secondary {
@@ -161,7 +138,7 @@ code {
 
 .btn-secondary:hover {
   border-color: var(--ink);
-  background: rgba(23, 20, 15, 0.04);
+  background: rgba(21, 23, 15, 0.04);
 }
 
 .btn-danger {
@@ -217,7 +194,7 @@ button:disabled {
   flex: 0 0 32px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid transparent;
   color: var(--muted);
   font-size: 12px;
@@ -244,10 +221,8 @@ button:disabled {
 }
 
 .field > span {
-  font-size: 9.5px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -263,7 +238,7 @@ textarea {
   width: 100%;
   padding: 12px 13px;
   border: 1px solid var(--line-strong);
-  border-radius: 9px;
+  border-radius: 0;
   background: var(--paper-3);
   color: var(--ink);
   font-family: var(--sans);
@@ -274,7 +249,7 @@ textarea {
 
 input::placeholder,
 textarea::placeholder {
-  color: #a79f90;
+  color: #71755f;
 }
 
 input:focus,
@@ -282,7 +257,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--clay);
-  box-shadow: 0 0 0 3px rgba(207, 87, 48, 0.13);
+  box-shadow: 0 0 0 3px rgba(94, 101, 71, 0.13);
 }
 
 textarea {
@@ -292,7 +267,7 @@ textarea {
 
 select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23857d6f' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23626553' stroke-width='1.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   padding-right: 36px;
@@ -329,33 +304,9 @@ select {
   justify-content: space-between;
   gap: 40px;
   padding: 42px clamp(32px, 4.5vw, 68px);
-  background: var(--ink);
+  background: var(--military);
   color: var(--paper-3);
   overflow: hidden;
-}
-
-.login-art::before {
-  content: "";
-  position: absolute;
-  right: -180px;
-  bottom: -180px;
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(207, 87, 48, 0.55), rgba(207, 87, 48, 0) 68%);
-  pointer-events: none;
-}
-
-.login-art::after {
-  content: "✳";
-  position: absolute;
-  right: 6%;
-  top: 12%;
-  font-family: var(--serif);
-  font-size: 180px;
-  line-height: 1;
-  color: rgba(251, 248, 241, 0.06);
-  pointer-events: none;
 }
 
 .login-art-top {
@@ -372,11 +323,12 @@ select {
   flex: 0 0 44px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  background: var(--ink);
+  border-radius: 0;
+  background: var(--military);
   color: var(--paper-3);
   font-family: var(--serif);
   font-size: 19px;
+  font-weight: 600;
   letter-spacing: -0.04em;
 }
 
@@ -397,10 +349,8 @@ select {
 
 .login-art-brand span {
   font-family: var(--sans);
-  font-size: 8.5px;
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
-  color: rgba(251, 248, 241, 0.48);
+  font-size: 11.5px;
+  color: rgba(250, 249, 243, 0.55);
 }
 
 .login-hero {
@@ -419,15 +369,14 @@ select {
 
 .login-hero h1 em {
   color: var(--clay-soft);
-  font-style: italic;
-  padding-left: 0.05em;
+  font-style: normal;
 }
 
 .login-hero p {
   max-width: 40ch;
   font-size: 14px;
   line-height: 1.7;
-  color: rgba(251, 248, 241, 0.6);
+  color: rgba(250, 249, 243, 0.6);
 }
 
 .login-art-foot {
@@ -438,16 +387,9 @@ select {
   gap: 14px;
   flex-wrap: wrap;
   padding-top: 22px;
-  border-top: 1px solid rgba(251, 248, 241, 0.14);
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(251, 248, 241, 0.45);
-}
-
-.login-art-foot i {
-  font-style: normal;
-  color: var(--clay-soft);
+  border-top: 1px solid rgba(250, 249, 243, 0.14);
+  font-size: 12px;
+  color: rgba(250, 249, 243, 0.5);
 }
 
 .login-panel {
@@ -490,7 +432,6 @@ select {
 .login-form .field input {
   padding: 14px;
   font-size: 15px;
-  letter-spacing: 0.06em;
 }
 
 .login-form .btn-primary {
@@ -500,9 +441,9 @@ select {
 
 .form-error {
   padding: 10px 12px;
-  border-radius: 8px;
-  background: rgba(182, 65, 37, 0.09);
-  border: 1px solid rgba(182, 65, 37, 0.22);
+  border-radius: 0;
+  background: rgba(156, 58, 38, 0.09);
+  border: 1px solid rgba(156, 58, 38, 0.22);
   color: var(--danger);
   font-size: 12px;
   line-height: 1.5;
@@ -529,7 +470,7 @@ select {
    ========================================================================== */
 
 .admin-body {
-  background: #f6f2e9;
+  background: var(--paper);
 }
 
 .admin-shell {
@@ -578,9 +519,7 @@ select {
 }
 
 .brand-role {
-  font-size: 8.5px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -597,7 +536,7 @@ select {
   gap: 11px;
   width: 100%;
   padding: 10px 12px;
-  border-radius: 9px;
+  border-radius: 0;
   font-size: 12.5px;
   color: var(--ink-2);
   text-align: left;
@@ -605,12 +544,12 @@ select {
 }
 
 .side-link:hover {
-  background: rgba(23, 20, 15, 0.05);
+  background: rgba(21, 23, 15, 0.05);
   color: var(--ink);
 }
 
 .side-link.active {
-  background: var(--ink);
+  background: var(--military);
   color: var(--paper-3);
 }
 
@@ -625,15 +564,14 @@ select {
 .side-count {
   margin-left: auto;
   padding: 1px 6px;
-  border-radius: 999px;
-  background: rgba(23, 20, 15, 0.08);
-  font-family: var(--mono);
-  font-size: 9px;
+  border-radius: 0;
+  background: rgba(21, 23, 15, 0.08);
+  font-size: 10px;
   color: var(--muted);
 }
 
 .side-link.active .side-count {
-  background: rgba(251, 248, 241, 0.14);
+  background: rgba(250, 249, 243, 0.14);
   color: var(--paper-3);
 }
 
@@ -686,7 +624,7 @@ select {
 }
 
 /* ==========================================================================
-   Visão geral
+   VisÃ£o geral
    ========================================================================== */
 
 .tab-panel {
@@ -701,7 +639,7 @@ select {
   flex-wrap: wrap;
   padding: 16px 18px;
   margin-bottom: 16px;
-  border-radius: 12px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: var(--paper-3);
 }
@@ -720,13 +658,13 @@ select {
 }
 
 .notice-warn {
-  border-color: rgba(207, 87, 48, 0.35);
-  background: rgba(207, 87, 48, 0.07);
+  border-color: rgba(94, 101, 71, 0.35);
+  background: rgba(94, 101, 71, 0.07);
 }
 
 .notice-demo {
-  border-color: rgba(110, 113, 87, 0.35);
-  background: rgba(110, 113, 87, 0.08);
+  border-color: rgba(94, 101, 71, 0.35);
+  background: rgba(94, 101, 71, 0.08);
 }
 
 .stats {
@@ -739,7 +677,7 @@ select {
 .stat {
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 0;
   background: var(--paper-3);
 }
 
@@ -752,9 +690,7 @@ select {
 
 .stat-label {
   margin-top: 9px;
-  font-size: 8.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 11.5px;
   color: var(--muted);
 }
 
@@ -762,7 +698,7 @@ select {
   padding: 22px;
   margin-bottom: 16px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 0;
   background: var(--paper-3);
 }
 
@@ -810,7 +746,7 @@ select {
   width: 46px;
   height: 54px;
   flex: 0 0 46px;
-  border-radius: 7px;
+  border-radius: 0;
   overflow: hidden;
   background: var(--paper-2);
   display: grid;
@@ -910,7 +846,7 @@ select {
 
 .work-table {
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 0;
   background: var(--paper-3);
   overflow: hidden;
 }
@@ -929,14 +865,14 @@ select {
 }
 
 .work-row:hover {
-  background: rgba(23, 20, 15, 0.02);
+  background: rgba(21, 23, 15, 0.02);
 }
 
 .work-thumb {
   width: 50px;
   height: 60px;
   flex: 0 0 50px;
-  border-radius: 7px;
+  border-radius: 0;
   overflow: hidden;
   background: var(--paper-2);
   display: grid;
@@ -969,13 +905,11 @@ select {
 .work-title .demo-tag {
   margin-left: 6px;
   padding: 2px 5px;
-  border-radius: 4px;
-  background: rgba(110, 113, 87, 0.16);
-  color: var(--olive, #6e7157);
-  font-size: 7.5px;
+  border-radius: 0;
+  background: rgba(94, 101, 71, 0.16);
+  color: var(--olive, #5e6547);
+  font-size: 9.5px;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   vertical-align: 2px;
 }
 
@@ -992,10 +926,8 @@ select {
   flex: 0 0 auto;
   padding: 5px 9px;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  font-size: 8.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  border-radius: 0;
+  font-size: 10.5px;
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -1007,11 +939,9 @@ select {
   gap: 6px;
   min-width: 88px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid transparent;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 11px;
   transition: background 0.2s, border-color 0.2s;
 }
 
@@ -1024,13 +954,13 @@ select {
 }
 
 .status-pill.published {
-  background: rgba(59, 122, 80, 0.1);
-  border-color: rgba(59, 122, 80, 0.22);
+  background: rgba(63, 122, 85, 0.1);
+  border-color: rgba(63, 122, 85, 0.22);
   color: #2c6a42;
 }
 
 .status-pill.draft {
-  background: rgba(23, 20, 15, 0.05);
+  background: rgba(21, 23, 15, 0.05);
   border-color: var(--line);
   color: var(--muted);
 }
@@ -1082,7 +1012,7 @@ select {
 }
 
 /* ==========================================================================
-   Configurações
+   ConfiguraÃ§Ãµes
    ========================================================================== */
 
 .settings-form {
@@ -1095,7 +1025,7 @@ select {
 .settings-section {
   padding: 24px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 0;
   background: var(--paper-3);
 }
 
@@ -1138,15 +1068,13 @@ select {
   width: 96px;
   height: 120px;
   flex: 0 0 96px;
-  border-radius: 10px;
+  border-radius: 0;
   overflow: hidden;
   border: 1px dashed var(--line-strong);
   background: var(--paper-2);
   display: grid;
   place-items: center;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -1184,7 +1112,7 @@ select {
   align-items: start;
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 0;
   background: var(--paper);
 }
 
@@ -1211,11 +1139,11 @@ select {
   justify-content: space-between;
   gap: 18px;
   padding: 13px 16px;
-  border-radius: 14px;
-  background: var(--ink);
-  color: rgba(251, 248, 241, 0.65);
+  border-radius: 0;
+  background: var(--military);
+  color: rgba(250, 249, 243, 0.65);
   font-size: 11px;
-  box-shadow: 0 18px 40px -20px rgba(23, 20, 15, 0.6);
+  box-shadow: 0 18px 40px -20px rgba(21, 23, 15, 0.6);
 }
 
 /* ==========================================================================
@@ -1233,7 +1161,7 @@ select {
 .drawer-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(23, 20, 15, 0.42);
+  background: rgba(21, 23, 15, 0.42);
   backdrop-filter: blur(4px);
   opacity: 0;
   transition: opacity 0.35s var(--ease);
@@ -1251,7 +1179,7 @@ select {
   height: 100%;
   background: var(--paper);
   border-left: 1px solid var(--line);
-  box-shadow: -30px 0 80px -40px rgba(23, 20, 15, 0.5);
+  box-shadow: -30px 0 80px -40px rgba(21, 23, 15, 0.5);
   transform: translateX(100%);
   transition: transform 0.4s var(--ease);
 }
@@ -1304,10 +1232,8 @@ select {
 
 .form-section h3 {
   margin: 0 0 16px;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -1323,8 +1249,8 @@ select {
   padding: 16px;
   margin-bottom: 8px;
   border: 1.5px dashed var(--line-strong);
-  border-radius: 12px;
-  background: rgba(23, 20, 15, 0.018);
+  border-radius: 0;
+  background: rgba(21, 23, 15, 0.018);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 }
@@ -1332,7 +1258,7 @@ select {
 .dropzone:hover,
 .dropzone.dragover {
   border-color: var(--clay);
-  background: rgba(207, 87, 48, 0.045);
+  background: rgba(94, 101, 71, 0.045);
 }
 
 .dropzone-empty {
@@ -1376,7 +1302,7 @@ select {
   width: 80px;
   height: 100px;
   flex: 0 0 80px;
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid var(--line);
   object-fit: cover;
 }
@@ -1429,7 +1355,7 @@ select {
   height: 22px;
   flex: 0 0 38px;
   margin-top: 1px;
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--line-strong);
   transition: background 0.25s;
 }
@@ -1441,7 +1367,7 @@ select {
   left: 3px;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: 0;
   background: #fff;
   transition: transform 0.25s var(--ease);
 }
@@ -1482,7 +1408,7 @@ select {
 }
 
 /* ==========================================================================
-   Confirmação e toast
+   ConfirmaÃ§Ã£o e toast
    ========================================================================== */
 
 .confirm {
@@ -1497,7 +1423,7 @@ select {
 .confirm-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(23, 20, 15, 0.48);
+  background: rgba(21, 23, 15, 0.48);
   backdrop-filter: blur(4px);
 }
 
@@ -1505,9 +1431,9 @@ select {
   position: relative;
   width: min(420px, 100%);
   padding: 26px;
-  border-radius: 16px;
+  border-radius: 0;
   background: var(--paper);
-  box-shadow: 0 30px 80px -30px rgba(23, 20, 15, 0.55);
+  box-shadow: 0 30px 80px -30px rgba(21, 23, 15, 0.55);
   animation: confirm-in 0.25s var(--ease) both;
 }
 
@@ -1538,7 +1464,7 @@ select {
   bottom: 26px;
   z-index: 500;
   padding: 12px 20px;
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--ink);
   color: var(--paper-3);
   font-size: 12px;
@@ -1563,7 +1489,7 @@ body.locked {
 }
 
 /* ==========================================================================
-   Animações
+   AnimaÃ§Ãµes
    ========================================================================== */
 
 @keyframes panel-in {
@@ -1622,9 +1548,7 @@ body.locked {
     display: block;
     margin-top: 2px;
     font-family: var(--sans);
-    font-size: 8px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-size: 11px;
     color: var(--muted);
   }
 
@@ -1642,7 +1566,7 @@ body.locked {
     padding: 10px 16px;
     border-right: 0;
     border-bottom: 1px solid var(--line);
-    background: rgba(236, 229, 214, 0.92);
+    background: rgba(231, 230, 218, 0.92);
     backdrop-filter: blur(14px);
     overflow-x: auto;
   }
@@ -1659,8 +1583,8 @@ body.locked {
   .side-link {
     width: auto;
     white-space: nowrap;
-    padding: 8px 11px;
-    font-size: 11.5px;
+    padding: 8px 9px;
+    font-size: 11px;
   }
 
   .side-foot {
@@ -1670,10 +1594,6 @@ body.locked {
     padding-top: 0;
     border-top: 0;
     gap: 2px;
-  }
-
-  .side-foot .side-link span:last-child {
-    display: none;
   }
 
   .admin-main {
