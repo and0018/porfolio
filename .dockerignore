@@ -6,4 +6,7 @@ public/uploads
 .env.*
 *.log
 README.md
+DEPLOY.md
 render.yaml
+docker-compose.yml
+Caddyfile

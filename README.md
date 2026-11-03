@@ -117,6 +117,8 @@ public/assets/          CSS e JavaScript do site
 views/                  Páginas do admin e 404
 data/                   db.json + segredos (gerado em runtime, não versionado)
 public/uploads/         Imagens enviadas e capas de exemplo
+DEPLOY.md               Guia de deploy, backup e restauração
+docker-compose.yml      VPS com volume persistente e Caddy opcional
 ```
 
 ### Endpoints úteis
@@ -132,7 +134,35 @@ public/uploads/         Imagens enviadas e capas de exemplo
 
 ## Deploy
 
-### Docker
+O projeto precisa de um processo Node contínuo e de um disco gravável. Ele **não
+funciona no Netlify como está**. O passo a passo completo por plataforma, com
+backup, restauração e solução de problemas, está em [`DEPLOY.md`](DEPLOY.md).
+
+### Render
+
+O `render.yaml` já descreve o serviço com disco persistente de 1 GB em
+`/var/data`. No Render:
+
+1. Crie um **Blueprint** a partir do repositório.
+2. Defina `ADMIN_PASSWORD` e `SITE_URL` quando solicitado.
+3. Confirme o disco `portfolio-data` (necessário para manter dados e uploads).
+
+O plano Free não inclui disco persistente: serve apenas como demonstração e
+perde dados e uploads a cada restart. Veja as ressalvas no `DEPLOY.md`.
+
+### Docker / VPS
+
+Há um `docker-compose.yml` com volume persistente e um `Caddyfile` opcional para
+HTTPS automático:
+
+```bash
+cp .env.example .env   # preencha ADMIN_PASSWORD, SESSION_SECRET e SITE_URL
+docker compose up -d --build
+# com domínio e HTTPS:
+docker compose --profile proxy up -d --build
+```
+
+Para rodar sem Compose:
 
 ```bash
 docker build -t vinicius-portfolio .
@@ -140,29 +170,17 @@ docker run -p 3000:3000 \
   -e ADMIN_PASSWORD="troque-esta-senha" \
   -e SESSION_SECRET="um-segredo-longo-e-aleatorio" \
   -e SITE_URL="https://seudominio.com" \
-  -v portfolio-data:/app/data \
-  -v portfolio-uploads:/app/public/uploads \
+  -e DATA_DIR=/var/data \
+  -e UPLOAD_DIR=/var/data/uploads \
+  -v portfolio-data:/var/data \
   vinicius-portfolio
 ```
 
-### Render
-
-O arquivo `render.yaml` descreve o serviço com disco persistente em `/var/data`.
-No Render:
-
-1. Crie um **Blueprint** a partir do repositório.
-2. Defina `ADMIN_PASSWORD` e `SITE_URL` quando solicitado.
-3. Confirme o disco de 1 GB (necessário para manter dados e uploads).
-
-O plano gratuito não inclui disco persistente; nesse caso, remova o bloco
-`disk` e as variáveis `DATA_DIR`/`UPLOAD_DIR` do blueprint, sabendo que os dados
-serão efêmeros.
-
-### Railway / VPS
+### Railway
 
 Use `npm ci --omit=dev` como build e `node server.js` como start. Monte um volume
-persistente e aponte `DATA_DIR`/`UPLOAD_DIR` para ele (`/var/data` e
-`/var/data/uploads`, por exemplo).
+persistente em `/var/data` e defina `DATA_DIR=/var/data` e
+`UPLOAD_DIR=/var/data/uploads`.
 
 ---
 

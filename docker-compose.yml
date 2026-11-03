@@ -1,0 +1,40 @@
+services:
+  app:
+    build: .
+    container_name: vinicius-portfolio
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_DIR: /var/data
+      UPLOAD_DIR: /var/data/uploads
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - portfolio-data:/var/data
+
+  # HTTPS automático com Caddy. Use com:
+  #   docker compose --profile proxy up -d --build
+  # Defina SITE_DOMAIN no .env (ex.: SITE_DOMAIN=seudominio.com).
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["proxy"]
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  portfolio-data:
+  caddy-data:
+  caddy-config:
