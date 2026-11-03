@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>__SITE_TITLE__</title>
+    <meta name="description" content="__SITE_DESC__" />
+    <link rel="canonical" href="__SITE_URL__" />
+    <meta name="theme-color" content="#F4EFE4" />
+    <meta name="color-scheme" content="light" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="__SITE_TITLE__" />
+    <meta property="og:description" content="__SITE_DESC__" />
+    <meta property="og:url" content="__SITE_URL__" />
+    <meta property="og:image" content="__OG_IMAGE__" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="__SITE_TITLE__" />
+    <meta name="twitter:description" content="__SITE_DESC__" />
+    <meta name="twitter:image" content="__OG_IMAGE__" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/styles.css?v=3" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <script type="application/ld+json">
+      __JSON_LD__
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#vitrine">Pular para a vitrine</a>
+
+    <header class="site-header" id="header">
+      <div class="container header-inner">
+        <a class="brand" href="#top">
+          <span class="brand-mark" data-bind="monogram">VA</span>
+          <span class="brand-text">
+            <span class="brand-name" data-bind="siteName">Vinicius Almeida</span>
+            <span class="brand-role" data-bind="role">Designer &amp; Motion</span>
+          </span>
+        </a>
+
+        <nav class="nav" aria-label="Navegação principal">
+          <a href="#vitrine">Vitrine</a>
+          <a href="#sobre">Sobre</a>
+          <a href="#servicos">Serviços</a>
+          <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="btn btn-ink btn-sm header-cta" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">
+            Vamos conversar <span class="arr">↗</span>
+          </a>
+          <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menu">
+            <span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <nav class="mobile-nav" aria-label="Menu">
+        <a href="#vitrine" data-menu-link><span>01</span> Vitrine</a>
+        <a href="#sobre" data-menu-link><span>02</span> Sobre</a>
+        <a href="#servicos" data-menu-link><span>03</span> Serviços</a>
+        <a href="#contato" data-menu-link><span>04</span> Contato</a>
+      </nav>
+      <div class="mobile-menu-foot">
+        <a class="btn btn-ink" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">
+          Falar no WhatsApp <span class="arr">↗</span>
+        </a>
+        <p><span data-bind="availability">Disponível para novos projetos</span><br /><span data-bind="location">Brasil · projetos remotos</span></p>
+      </div>
+    </div>
+
+    <main id="top">
+      <section class="hero container">
+        <div class="hero-copy">
+          <div class="hero-eyebrow reveal">
+            <span class="status"><i></i><span data-bind="availability">Disponível para novos projetos</span></span>
+            <span class="hero-loc" data-bind="location">Brasil · projetos remotos</span>
+          </div>
+
+          <h1 class="hero-title reveal" style="--delay: 60ms">
+            <span class="hero-title-lead" data-bind="heroTitleLead">Design que prende o olhar.</span>
+            <span class="hero-title-accent" data-bind="heroTitleAccent">Movimento que fica.</span>
+          </h1>
+
+          <p class="hero-sub reveal" style="--delay: 120ms" data-bind="heroSubtitle">
+            Sou Vinicius Almeida, designer e motion. Crio identidades, campanhas e conteúdo em movimento para marcas que querem ser vistas — e lembradas.
+          </p>
+
+          <div class="hero-actions reveal" style="--delay: 180ms">
+            <a class="btn btn-ink" href="#vitrine">
+              <span data-bind="heroPrimaryCta">Ver a vitrine</span>
+              <span class="arr">↓</span>
+            </a>
+            <a class="btn btn-ghost" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">
+              <span data-bind="heroSecondaryCta">Falar no WhatsApp</span>
+              <span class="arr">↗</span>
+            </a>
+          </div>
+
+          <div class="hero-foot reveal" style="--delay: 240ms">
+            <span>Identidade visual</span>
+            <span>Motion</span>
+            <span>Conteúdo</span>
+            <span class="hero-scroll">Role para ver <i>↓</i></span>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal" style="--delay: 120ms">
+          <div class="hero-frame" aria-hidden="true"></div>
+
+          <button class="hero-main" id="heroMain" type="button">
+            <span class="sr-only">Abrir projeto em destaque: </span>
+            <span class="media-fallback" id="heroMainFallback" aria-hidden="true"><span>VA</span></span>
+            <img id="heroMainImg" alt="" hidden />
+            <span class="hero-main-top">
+              <span class="pill pill-dark">Destaque</span>
+              <span class="hero-year" id="heroYear">2026</span>
+            </span>
+            <span class="hero-main-bottom">
+              <span class="hero-main-title" id="heroMainTitle">Projeto em destaque</span>
+              <span class="hero-arrow">↗</span>
+            </span>
+          </button>
+
+          <button class="hero-mini" id="heroMini" type="button">
+            <span class="sr-only">Abrir vídeo em destaque: </span>
+            <span class="media-fallback" id="heroMiniFallback" aria-hidden="true"><span>▶</span></span>
+            <img id="heroMiniImg" alt="" hidden />
+            <span class="hero-mini-tag" id="heroMiniTag">Vídeo</span>
+            <span class="hero-mini-play" aria-hidden="true">▶</span>
+          </button>
+
+          <div class="hero-sticker" aria-hidden="true">
+            <svg viewBox="0 0 120 120" class="sticker-text">
+              <defs>
+                <path id="stickerCircle" d="M60,60 m-43,0 a43,43 0 1,1 86,0 a43,43 0 1,1 -86,0" />
+              </defs>
+              <text>
+                <textPath href="#stickerCircle" startOffset="0">DISPONÍVEL PARA PROJETOS • DESIGN &amp; MOTION • </textPath>
+              </text>
+            </svg>
+            <span class="sticker-star">✳</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <div class="marquee-group">
+            <span>Motion design</span><i>✳</i><span>Direção de arte</span><i>✳</i><span>Identidade visual</span><i>✳</i><span>Conteúdo</span><i>✳</i><span>TikTok</span><i>✳</i><span>Instagram</span><i>✳</i>
+          </div>
+          <div class="marquee-group">
+            <span>Motion design</span><i>✳</i><span>Direção de arte</span><i>✳</i><span>Identidade visual</span><i>✳</i><span>Conteúdo</span><i>✳</i><span>TikTok</span><i>✳</i><span>Instagram</span><i>✳</i>
+          </div>
+        </div>
+      </div>
+
+      <section class="section vitrine" id="vitrine">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <p class="eyebrow">01 / Vitrine</p>
+              <h2>Trabalhos que falam <em>por si</em>.</h2>
+            </div>
+            <div class="section-head-side">
+              <p>Vídeos, artes e projetos selecionados. Clique em qualquer peça para abrir e ver de perto.</p>
+              <p class="work-count" id="workCount">Carregando…</p>
+            </div>
+          </div>
+
+          <div class="filters reveal" id="filters" role="group" aria-label="Filtrar trabalhos"></div>
+
+          <div class="gallery" id="gallery" aria-live="polite"></div>
+
+          <noscript>
+            <p class="empty">Ative o JavaScript para carregar a vitrine. Você também pode falar comigo pelo WhatsApp.</p>
+          </noscript>
+        </div>
+      </section>
+
+      <section class="about" id="sobre">
+        <div class="container about-grid">
+          <div class="about-media reveal">
+            <div class="about-photo" id="aboutPhotoWrap">
+              <img id="aboutPhoto" alt="Retrato de Vinicius Almeida" hidden />
+              <div class="photo-fallback" id="aboutPhotoFallback" aria-hidden="true">
+                <span class="pf-mark">VA</span>
+                <span class="pf-line"></span>
+                <span class="pf-label">Designer<br />&amp; Motion</span>
+              </div>
+            </div>
+            <div class="about-stamp" aria-hidden="true">
+              <span class="stamp-mark" data-bind="monogram">VA</span>
+              <span>Estúdio</span>
+            </div>
+          </div>
+
+          <div class="about-copy reveal">
+            <p class="eyebrow">02 / Sobre</p>
+            <h2 class="about-quote">
+              <span data-bind="aboutQuote">Bom design não grita.</span>
+              <em data-bind="aboutQuoteAccent">Ele faz você olhar de novo.</em>
+            </h2>
+            <div class="about-text" id="aboutText"></div>
+
+            <div class="about-sign">
+              <span class="sign-name" data-bind="siteName">Vinicius Almeida</span>
+              <span class="sign-role" data-bind="role">Designer &amp; Motion</span>
+            </div>
+
+            <ul class="about-tags" aria-label="Áreas de atuação">
+              <li>Identidade</li>
+              <li>Motion</li>
+              <li>Direção de arte</li>
+              <li>Conteúdo</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section services" id="servicos">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <p class="eyebrow">03 / Serviços</p>
+              <h2>Do conceito ao <em>frame final</em>.</h2>
+            </div>
+            <div class="section-head-side">
+              <p>Você traz a ideia, eu organizo o caminho. Cada projeto é feito do tamanho do que ele precisa ser — sem fórmula pronta.</p>
+            </div>
+          </div>
+
+          <div class="services-list" id="servicesList"></div>
+
+          <div class="services-cta reveal">
+            <p>Não sabe em qual serviço seu projeto se encaixa?</p>
+            <a class="link-arrow" data-wa data-wa-message="Oi, Vinicius! Não sei exatamente qual serviço preciso, mas quero conversar sobre um projeto.">
+              Me conta a ideia <span>→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta" id="contato">
+        <div class="container cta-inner reveal">
+          <p class="eyebrow eyebrow-light">04 / Contato</p>
+          <h2>
+            <span data-bind="ctaTitle">Tem uma ideia que ainda</span>
+            <em data-bind="ctaAccent">não tem forma?</em>
+          </h2>
+          <p data-bind="ctaText">
+            Me conta o que você quer construir. Eu ajudo a transformar em identidade, campanha ou conteúdo que as pessoas param para ver.
+          </p>
+          <div class="cta-actions">
+            <a class="btn btn-paper" data-wa data-wa-message="Oi, Vinicius! Quero tirar uma ideia do papel. Podemos conversar?">
+              Falar no WhatsApp <span class="arr">↗</span>
+            </a>
+            <span class="cta-note"><i></i><span data-bind="ctaNote">Resposta em até 1 dia útil</span></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a class="brand" href="#top">
+              <span class="brand-mark" data-bind="monogram">VA</span>
+              <span class="brand-text">
+                <span class="brand-name" data-bind="siteName">Vinicius Almeida</span>
+                <span class="brand-role" data-bind="role">Designer &amp; Motion</span>
+              </span>
+            </a>
+            <p data-bind="footerNote">Design, arte e movimento para marcas que querem ser vistas — e lembradas.</p>
+            <p class="footer-status"><i></i><span data-bind="availability">Disponível para novos projetos</span></p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Navegue</h3>
+            <a href="#vitrine">Vitrine</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#contato">Contato</a>
+          </div>
+
+          <div class="footer-col">
+            <h3>Social</h3>
+            <a id="footerTiktok" href="#" target="_blank" rel="noopener">TikTok</a>
+            <a id="footerInstagram" href="#" target="_blank" rel="noopener">Instagram</a>
+            <a id="footerEmail" href="#" hidden>E-mail</a>
+          </div>
+
+          <div class="footer-col">
+            <h3>Contato</h3>
+            <a data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto.">WhatsApp</a>
+            <span class="footer-muted" data-bind="whatsappDisplay">+55 95 98413-0864</span>
+            <span class="footer-muted" data-bind="location">Brasil · projetos remotos</span>
+          </div>
+        </div>
+
+        <div class="footer-word" id="footerWord" data-word="VINICIUS ALMEIDA" aria-hidden="true"></div>
+
+        <div class="footer-bottom">
+          <span>© __YEAR__ <span data-bind="siteName">Vinicius Almeida</span>. Todos os direitos reservados. __ADMIN_LINK__</span>
+          <span class="footer-credit">Feito com intenção <span aria-hidden="true">✳</span></span>
+          <a href="#top" class="back-top">Voltar ao topo ↑</a>
+        </div>
+      </div>
+    </footer>
+
+    <a class="wa-float" id="waFloat" data-wa data-wa-message="Oi, Vinicius! Vi seu site e quero conversar sobre um projeto." aria-label="Falar no WhatsApp">
+      <span class="wa-dot"></span>
+      <span class="wa-text">Falar no WhatsApp</span>
+      <span class="arr">↗</span>
+    </a>
+
+    <div class="modal" id="modal" hidden>
+      <div class="modal-backdrop" data-close></div>
+      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+        <button class="modal-close" type="button" data-close aria-label="Fechar projeto">✕</button>
+        <div class="modal-media" id="modalMedia"></div>
+        <div class="modal-content">
+          <div class="modal-scroll">
+            <p class="eyebrow" id="modalKicker">Projeto</p>
+            <h2 class="modal-title" id="modalTitle">Projeto</h2>
+            <div class="modal-desc" id="modalDesc"></div>
+            <dl class="modal-meta" id="modalMeta"></dl>
+            <div class="modal-actions" id="modalActions"></div>
+          </div>
+          <div class="modal-nav">
+            <button type="button" id="modalPrev">← Anterior</button>
+            <span id="modalIndex">1 / 1</span>
+            <button type="button" id="modalNext">Próximo →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="application/json" id="boot">__BOOTSTRAP__</script>
+    <script src="/assets/app.js?v=3" defer></script>
+  </body>
+</html>

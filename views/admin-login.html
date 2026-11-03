@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Entrar — Painel do estúdio</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#F4EFE4" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/admin.css?v=3" />
+  </head>
+
+  <body class="login-body">
+    <main class="login">
+      <section class="login-art" aria-hidden="true">
+        <div class="login-art-top">
+          <span class="brand-mark">VA</span>
+          <span class="login-art-brand">Vinicius Almeida<span>Designer &amp; Motion</span></span>
+        </div>
+
+        <div class="login-hero">
+          <p class="eyebrow eyebrow-light">Painel do estúdio</p>
+          <h1>Seu trabalho,<br /><em>no ar.</em></h1>
+          <p>Publique vídeos, artes e projetos. Atualize a vitrine sem depender de ninguém.</p>
+        </div>
+
+        <div class="login-art-foot">
+          <span>Vídeos do TikTok</span><i>✳</i><span>Artes do Instagram</span><i>✳</i><span>Projetos</span>
+        </div>
+      </section>
+
+      <section class="login-panel">
+        <div class="login-mobile-brand">
+          <span class="brand-mark">VA</span>
+          <span>Vinicius Almeida<small>Designer &amp; Motion</small></span>
+        </div>
+
+        <form class="login-card" id="loginForm">
+          <p class="eyebrow">Acesso restrito</p>
+          <h2>Entrar no painel</h2>
+          <p class="login-sub">Use a senha administrativa definida no servidor para gerenciar a vitrine.</p>
+
+          <div class="login-form">
+            <label class="field">
+              <span>Senha</span>
+              <input type="password" name="password" id="password" autocomplete="current-password" required autofocus />
+            </label>
+
+            <button class="btn-primary btn-block" type="submit" id="loginBtn">Entrar <span>→</span></button>
+            <p class="form-error" id="loginError" role="alert" hidden></p>
+          </div>
+
+          <a class="back-link" href="/">← Voltar ao site</a>
+        </form>
+      </section>
+    </main>
+
+    <script src="/assets/login.js?v=3" defer></script>
+  </body>
+</html>

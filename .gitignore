@@ -1,0 +1,11 @@
+node_modules/
+data/db.json
+data/admin-password.txt
+data/session-secret.txt
+public/uploads/*
+!public/uploads/.gitkeep
+.env
+.env.local
+.DS_Store
+Thumbs.db
+*.log

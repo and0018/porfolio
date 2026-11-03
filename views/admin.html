@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Painel do estúdio — Vinicius Almeida</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#F4EFE4" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/admin.css?v=3" />
+  </head>
+
+  <body class="admin-body">
+    <div class="admin-shell">
+      <aside class="sidebar">
+        <a class="brand sidebar-brand" href="/" target="_blank" rel="noopener">
+          <span class="brand-mark">VA</span>
+          <span class="brand-text">
+            <span class="brand-name">Vinicius Almeida</span>
+            <span class="brand-role">Painel do estúdio</span>
+          </span>
+        </a>
+
+        <nav class="side-nav" aria-label="Painel">
+          <button type="button" class="side-link active" data-tab="overview">
+            <span class="side-icon">◧</span>
+            <span>Visão geral</span>
+          </button>
+          <button type="button" class="side-link" data-tab="projects">
+            <span class="side-icon">▤</span>
+            <span>Projetos</span>
+            <span class="side-count" id="sideCount">0</span>
+          </button>
+          <button type="button" class="side-link" data-tab="settings">
+            <span class="side-icon">⚙</span>
+            <span>Configurações</span>
+          </button>
+        </nav>
+
+        <div class="side-foot">
+          <a class="side-link side-link-muted" href="/" target="_blank" rel="noopener">
+            <span class="side-icon">↗</span>
+            <span>Ver site</span>
+          </a>
+          <button type="button" class="side-link side-link-muted" id="logoutBtn">
+            <span class="side-icon">⏻</span>
+            <span>Sair</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="admin-topbar">
+          <div>
+            <p class="eyebrow" id="pageEyebrow">Painel</p>
+            <h1 id="pageTitle">Visão geral</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="save-state" id="saveState"></span>
+            <button type="button" class="btn-primary" id="newWorkBtn">+ Novo projeto</button>
+          </div>
+        </header>
+
+        <!-- visão geral -------------------------------------------------- -->
+        <section class="tab-panel" id="tab-overview">
+          <div class="notice notice-warn" id="passwordNotice" hidden>
+            <div>
+              <strong>Você ainda está com a senha padrão.</strong>
+              <p>Defina a variável <code>ADMIN_PASSWORD</code> no servidor antes de publicar o site.</p>
+            </div>
+          </div>
+
+          <div class="notice notice-demo" id="demoNotice" hidden>
+            <div>
+              <strong>Conteúdo de exemplo na vitrine</strong>
+              <p><span id="demoCount">0</span> projetos são exemplos para você ver o layout pronto. Edite ou remova antes de divulgar.</p>
+            </div>
+            <button type="button" class="btn-secondary btn-sm" id="clearDemoBtn">Remover exemplos</button>
+          </div>
+
+          <div class="stats" id="stats"></div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Últimos projetos</h2>
+                <p>O que está na vitrine agora.</p>
+              </div>
+              <button type="button" class="link-btn" data-goto="projects">Ver todos →</button>
+            </div>
+            <div id="recentList" class="recent-list"></div>
+          </div>
+
+          <div class="panel quick-actions">
+            <div>
+              <h2>Atalhos</h2>
+              <p>O que você quer fazer agora?</p>
+            </div>
+            <div class="quick-buttons">
+              <button type="button" class="btn-secondary" id="quickNew">Criar um projeto</button>
+              <a class="btn-secondary" href="/" target="_blank" rel="noopener">Abrir o site ↗</a>
+              <a class="btn-secondary" href="/api/admin/export" id="exportBtn">Exportar backup</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- projetos ----------------------------------------------------- -->
+        <section class="tab-panel" id="tab-projects" hidden>
+          <div class="toolbar">
+            <div class="search">
+              <span aria-hidden="true">⌕</span>
+              <input type="search" id="searchWorks" placeholder="Buscar por nome, cliente ou categoria…" aria-label="Buscar projetos" />
+            </div>
+            <div class="toolbar-right">
+              <select id="filterStatus" aria-label="Filtrar por status">
+                <option value="all">Todos os status</option>
+                <option value="published">Publicados</option>
+                <option value="draft">Rascunhos</option>
+              </select>
+              <button type="button" class="btn-primary" id="newWorkBtn2">+ Novo projeto</button>
+            </div>
+          </div>
+
+          <div class="work-table" id="workTable"></div>
+        </section>
+
+        <!-- configurações ------------------------------------------------ -->
+        <section class="tab-panel" id="tab-settings" hidden>
+          <form id="settingsForm" class="settings-form">
+            <div class="settings-section">
+              <h2>Marca</h2>
+              <p>Como o estúdio aparece no site, no menu e no rodapé.</p>
+              <div class="settings-grid">
+                <label class="field">
+                  <span>Nome do site</span>
+                  <input name="siteName" maxlength="80" placeholder="Vinicius Almeida" />
+                </label>
+                <label class="field">
+                  <span>Assinatura / cargo</span>
+                  <input name="role" maxlength="50" placeholder="Designer & Motion" />
+                </label>
+                <label class="field">
+                  <span>Monograma</span>
+                  <input name="monogram" maxlength="3" placeholder="VA" />
+                </label>
+                <label class="field">
+                  <span>Disponibilidade</span>
+                  <input name="availability" maxlength="90" placeholder="Disponível para novos projetos" />
+                </label>
+                <label class="field">
+                  <span>Localização</span>
+                  <input name="location" maxlength="90" placeholder="Brasil · projetos remotos" />
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2>Primeira dobra</h2>
+              <p>A frase que recebe quem chega. Mantenha curta e com personalidade.</p>
+              <div class="settings-grid">
+                <label class="field">
+                  <span>Título — primeira parte</span>
+                  <input name="heroTitleLead" maxlength="120" placeholder="Design que prende o olhar." />
+                </label>
+                <label class="field">
+                  <span>Título — destaque em itálico</span>
+                  <input name="heroTitleAccent" maxlength="120" placeholder="Movimento que fica." />
+                </label>
+                <label class="field full">
+                  <span>Subtítulo</span>
+                  <textarea name="heroSubtitle" rows="3" maxlength="500" placeholder="Sou Vinicius Almeida, designer e motion…"></textarea>
+                </label>
+                <label class="field">
+                  <span>Botão principal</span>
+                  <input name="heroPrimaryCta" maxlength="48" placeholder="Ver a vitrine" />
+                </label>
+                <label class="field">
+                  <span>Botão secundário</span>
+                  <input name="heroSecondaryCta" maxlength="48" placeholder="Falar no WhatsApp" />
+                </label>
+                <label class="field full">
+                  <span>Mensagem pré-preenchida do WhatsApp</span>
+                  <textarea name="whatsappMessage" rows="2" maxlength="320" placeholder="Oi, Vinicius! Vi seu portfólio…"></textarea>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2>Sobre</h2>
+              <p>Apresente seu processo, seu repertório e o que você resolve.</p>
+              <div class="settings-grid">
+                <label class="field">
+                  <span>Frase de abertura</span>
+                  <input name="aboutQuote" maxlength="160" placeholder="Bom design não grita." />
+                </label>
+                <label class="field">
+                  <span>Complemento em itálico</span>
+                  <input name="aboutQuoteAccent" maxlength="160" placeholder="Ele faz você olhar de novo." />
+                </label>
+                <label class="field full">
+                  <span>Texto de apresentação</span>
+                  <textarea name="aboutText" rows="7" maxlength="4500" placeholder="Separe os parágrafos com uma linha em branco."></textarea>
+                </label>
+              </div>
+
+              <div class="media-field">
+                <div class="media-preview" id="aboutPhotoPreview">
+                  <img id="aboutPhotoImg" alt="Prévia da foto" hidden />
+                  <span id="aboutPhotoEmpty">Sem foto</span>
+                </div>
+                <div class="media-actions">
+                  <label class="btn-secondary btn-sm" for="aboutPhotoInput">Escolher imagem</label>
+                  <input type="file" id="aboutPhotoInput" accept="image/jpeg,image/png,image/webp,image/avif" hidden />
+                  <button type="button" class="link-btn" id="clearAboutPhoto">Remover foto</button>
+                  <p>Proporção 4:5. JPG, PNG ou WEBP — a imagem é otimizada automaticamente.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2>Serviços</h2>
+              <p>Até seis frentes de trabalho. Descrições curtas funcionam melhor.</p>
+              <div id="servicesEditor" class="services-editor"></div>
+              <button type="button" class="btn-secondary btn-sm" id="addService">+ Adicionar serviço</button>
+            </div>
+
+            <div class="settings-section">
+              <h2>Contato e redes</h2>
+              <p>O WhatsApp é o CTA principal do site. Use o número com DDI e DDD.</p>
+              <div class="settings-grid">
+                <label class="field">
+                  <span>WhatsApp (somente números)</span>
+                  <input name="whatsapp" maxlength="15" inputmode="numeric" placeholder="5595984130864" />
+                </label>
+                <label class="field">
+                  <span>WhatsApp como aparece no site</span>
+                  <input name="whatsappDisplay" maxlength="40" placeholder="+55 95 98413-0864" />
+                </label>
+                <label class="field">
+                  <span>Link do TikTok</span>
+                  <input name="tiktok" maxlength="900" placeholder="https://www.tiktok.com/@seuuser" />
+                </label>
+                <label class="field">
+                  <span>Link do Instagram</span>
+                  <input name="instagram" maxlength="900" placeholder="https://www.instagram.com/seuuser" />
+                </label>
+                <label class="field">
+                  <span>E-mail (opcional)</span>
+                  <input name="email" type="email" maxlength="140" placeholder="contato@seudominio.com" />
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2>Chamada final e rodapé</h2>
+              <p>A última frase antes do contato e a assinatura do rodapé.</p>
+              <div class="settings-grid">
+                <label class="field">
+                  <span>CTA — primeira parte</span>
+                  <input name="ctaTitle" maxlength="120" placeholder="Tem uma ideia que ainda" />
+                </label>
+                <label class="field">
+                  <span>CTA — destaque em itálico</span>
+                  <input name="ctaAccent" maxlength="120" placeholder="não tem forma?" />
+                </label>
+                <label class="field full">
+                  <span>Texto da chamada</span>
+                  <textarea name="ctaText" rows="3" maxlength="500"></textarea>
+                </label>
+                <label class="field">
+                  <span>Nota de resposta</span>
+                  <input name="ctaNote" maxlength="90" placeholder="Resposta em até 1 dia útil" />
+                </label>
+                <label class="field">
+                  <span>Assinatura do rodapé</span>
+                  <input name="footerNote" maxlength="260" placeholder="Design, arte e movimento…" />
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h2>SEO</h2>
+              <p>Descrição usada pelo Google e ao compartilhar o site.</p>
+              <label class="field">
+                <span>Descrição do site</span>
+                <textarea name="seoDescription" rows="3" maxlength="220"></textarea>
+              </label>
+            </div>
+
+            <div class="settings-save">
+              <span>Tudo pronto? As mudanças aparecem no site na hora.</span>
+              <button type="submit" class="btn-paper" id="saveSettingsBtn">Salvar alterações</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <!-- editor de projeto ------------------------------------------------- -->
+    <div class="drawer" id="workDrawer" hidden>
+      <div class="drawer-backdrop" data-close-drawer></div>
+      <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" tabindex="-1">
+        <header class="drawer-head">
+          <div>
+            <p class="eyebrow" id="drawerEyebrow">Novo projeto</p>
+            <h2 id="drawerTitle">Adicionar à vitrine</h2>
+          </div>
+          <button type="button" class="icon-btn" id="closeDrawer" aria-label="Fechar editor">✕</button>
+        </header>
+
+        <form id="workForm" class="drawer-form">
+          <div class="drawer-scroll">
+            <div class="form-section">
+              <h3>Informações</h3>
+              <label class="field">
+                <span>Título do trabalho *</span>
+                <input name="title" id="workTitle" required maxlength="110" placeholder="Ex.: Reel de lançamento — Coleção Vento" />
+              </label>
+              <div class="field-grid">
+                <label class="field">
+                  <span>Categoria</span>
+                  <select name="category" id="workCategory"></select>
+                </label>
+                <label class="field">
+                  <span>Ano</span>
+                  <input name="year" id="workYear" maxlength="12" placeholder="2026" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Descrição</span>
+                <textarea name="description" id="workDescription" maxlength="2200" rows="5" placeholder="Conte o contexto, a ideia e o resultado. Separe parágrafos com uma linha em branco."></textarea>
+                <small id="descCount">0 / 2200</small>
+              </label>
+              <label class="field">
+                <span>Cliente / projeto</span>
+                <input name="client" id="workClient" maxlength="70" placeholder="Ex.: Estudo autoral" />
+              </label>
+            </div>
+
+            <div class="form-section">
+              <h3>Mídia</h3>
+              <div class="dropzone" id="coverDrop" role="button" tabindex="0" aria-label="Enviar imagem de capa">
+                <input type="file" id="coverInput" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden />
+                <div class="dropzone-empty" id="coverEmpty">
+                  <span class="dz-icon">↑</span>
+                  <strong>Arraste uma capa ou clique para enviar</strong>
+                  <small>JPG, PNG, WEBP, AVIF ou GIF · até 12 MB</small>
+                </div>
+                <div class="dropzone-preview" id="coverPreview" hidden>
+                  <img id="coverPreviewImg" alt="Prévia da capa" />
+                  <div class="dz-actions">
+                    <button type="button" id="changeCover">Trocar imagem</button>
+                    <button type="button" id="removeCover">Remover</button>
+                  </div>
+                </div>
+              </div>
+              <p class="hint" id="coverHint">A capa aparece na vitrine e no modal. Para vídeos, prefira um frame vertical (9:16).</p>
+
+              <label class="field">
+                <span>Link do vídeo no TikTok</span>
+                <input name="tiktokUrl" id="workTiktok" maxlength="900" placeholder="https://www.tiktok.com/@seuuser/video/1234567890" />
+                <small>Cole o link completo do vídeo. Ele é incorporado e reproduzido dentro do site.</small>
+              </label>
+              <label class="field">
+                <span>Link do projeto (opcional)</span>
+                <input name="externalUrl" id="workExternal" maxlength="900" placeholder="Behance, site, drive…" />
+              </label>
+              <label class="field">
+                <span>Link do Instagram (opcional)</span>
+                <input name="instagramUrl" id="workInstagram" maxlength="900" placeholder="https://www.instagram.com/p/…" />
+              </label>
+            </div>
+
+            <div class="form-section">
+              <h3>Publicação</h3>
+              <div class="switch-row">
+                <label class="switch">
+                  <input type="checkbox" id="workPublished" checked />
+                  <span class="track"></span>
+                  <span><strong>Publicado</strong><small>Aparece na vitrine pública</small></span>
+                </label>
+              </div>
+              <div class="switch-row">
+                <label class="switch">
+                  <input type="checkbox" id="workFeatured" />
+                  <span class="track"></span>
+                  <span><strong>Destacar no topo</strong><small>Usado no hero e na abertura da vitrine</small></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <footer class="drawer-foot">
+            <button type="button" class="btn-secondary" id="cancelWork">Cancelar</button>
+            <button type="submit" class="btn-primary" id="saveWorkBtn">Salvar projeto</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- confirmação -------------------------------------------------------- -->
+    <div class="confirm" id="confirm" hidden>
+      <div class="confirm-backdrop"></div>
+      <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" tabindex="-1">
+        <h2 id="confirmTitle">Tem certeza?</h2>
+        <p id="confirmText"></p>
+        <div class="confirm-actions">
+          <button type="button" class="btn-secondary" id="confirmCancel">Cancelar</button>
+          <button type="button" class="btn-danger" id="confirmOk">Excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="/assets/admin.js?v=3" defer></script>
+  </body>
+</html>
