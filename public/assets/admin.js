@@ -59,6 +59,7 @@
     workDescription: $("#workDescription"),
     workClient: $("#workClient"),
     workTiktok: $("#workTiktok"),
+    workMedia: $("#workMedia"),
     workExternal: $("#workExternal"),
     workInstagram: $("#workInstagram"),
     workPublished: $("#workPublished"),
@@ -758,6 +759,7 @@
     elements.workDescription.value = work?.description || "";
     elements.workClient.value = work?.client || "";
     elements.workTiktok.value = work?.tiktokUrl || "";
+    elements.workMedia.value = work?.mediaUrl || "";
     elements.workExternal.value = work?.externalUrl || "";
     elements.workInstagram.value = work?.instagramUrl || "";
     elements.workPublished.checked = work ? Boolean(work.published) : true;
@@ -892,6 +894,7 @@
         formData.append("description", elements.workDescription.value.trim());
         formData.append("client", elements.workClient.value.trim());
         formData.append("tiktokUrl", elements.workTiktok.value.trim());
+        formData.append("mediaUrl", elements.workMedia.value.trim());
         formData.append("externalUrl", elements.workExternal.value.trim());
         formData.append("instagramUrl", elements.workInstagram.value.trim());
         formData.append("published", elements.workPublished.checked ? "true" : "false");

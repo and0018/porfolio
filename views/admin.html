@@ -13,7 +13,7 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..700;1,400..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/assets/admin.css?v=6" />
+    <link rel="stylesheet" href="/assets/admin.css?v=7" />
   </head>
 
   <body class="admin-body">
@@ -345,6 +345,12 @@
 
             <div class="form-section">
               <h3>Mídia</h3>
+              <label class="field">
+                <span>Link da mídia (TikTok, Instagram ou YouTube)</span>
+                <input name="mediaUrl" id="workMedia" maxlength="900" placeholder="https://www.tiktok.com/@seuuser/video/1234567890" />
+                <small>Cole o link: a capa é puxada da plataforma e o vídeo ou publicação abre dentro do site. Se você enviar uma imagem abaixo, ela substitui a capa puxada.</small>
+              </label>
+
               <div class="dropzone" id="coverDrop" role="button" tabindex="0" aria-label="Enviar imagem de capa">
                 <input type="file" id="coverInput" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" hidden />
                 <div class="dropzone-empty" id="coverEmpty">
@@ -419,6 +425,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="/assets/admin.js?v=6" defer></script>
+    <script src="/assets/admin.js?v=7" defer></script>
   </body>
 </html>

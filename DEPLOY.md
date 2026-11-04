@@ -178,7 +178,8 @@ Guarde também o backup JSON exportado pelo painel.
 - [ ] Criar, editar, publicar, reordenar e excluir um projeto.
 - [ ] Enviar uma imagem e confirmar que ela aparece após recarregar.
 - [ ] Salvar configurações (WhatsApp, redes, SEO).
-- [ ] Abrir um projeto com TikTok e testar o player.
+- [ ] Abrir um projeto com link de mídia e testar o player (TikTok, Instagram ou
+      YouTube) e a capa puxada.
 - [ ] Testar o site em celular (390 px) e desktop.
 - [ ] Fazer um redeploy e confirmar que dados e uploads continuam.
 - [ ] Exportar um backup JSON.

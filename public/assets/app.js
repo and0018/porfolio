@@ -398,6 +398,36 @@
     return match ? match[1] : "";
   }
 
+  // O que reproduzir no modal: o link colado no painel tem prioridade; obras
+  // antigas que só têm "tiktokUrl" continuam funcionando pelo id extraído.
+  function mediaEmbed(work) {
+    if (work.mediaPlatform && work.mediaEmbed) {
+      return { platform: work.mediaPlatform, src: work.mediaEmbed };
+    }
+    const legacyId = work.tiktokId || tiktokIdFromUrl(work.tiktokUrl);
+    if (legacyId) {
+      return {
+        platform: "tiktok",
+        src: `https://www.tiktok.com/player/v1/${legacyId}?embed_from=oembed&music_info=1&description=1`,
+      };
+    }
+    return null;
+  }
+
+  function embedLabels(work, platform) {
+    if (platform === "instagram") {
+      return {
+        aria: `Abrir publicação do Instagram: ${work.title}`,
+        label: "Ver publicação no Instagram",
+        post: true,
+      };
+    }
+    if (platform === "youtube") {
+      return { aria: `Reproduzir vídeo do YouTube: ${work.title}`, label: "Reproduzir no YouTube", post: false };
+    }
+    return { aria: `Reproduzir vídeo do TikTok: ${work.title}`, label: "Reproduzir no TikTok", post: false };
+  }
+
   function fallbackMedia(work) {
     const fallback = document.createElement("div");
     fallback.className = "media-fallback";
@@ -428,61 +458,66 @@
   function renderModalMedia(work) {
     modalMedia.textContent = "";
 
-    if (work.category === "video") {
-      const id = work.tiktokId || tiktokIdFromUrl(work.tiktokUrl);
+    const embed = mediaEmbed(work);
 
-      if (id) {
-        const facade = document.createElement("button");
-        facade.type = "button";
-        facade.className = "modal-video-facade";
-        facade.setAttribute("aria-label", `Reproduzir vídeo: ${work.title}`);
+    if (embed) {
+      const labels = embedLabels(work, embed.platform);
 
-        if (work.cover) {
-          const image = document.createElement("img");
-          image.src = work.cover;
-          image.alt = "";
-          facade.append(image);
-        } else {
-          facade.append(fallbackMedia(work));
-        }
-
-        const play = document.createElement("span");
-        play.className = "facade-play";
-        play.setAttribute("aria-hidden", "true");
-        play.textContent = "▶";
-
-        const label = document.createElement("span");
-        label.className = "facade-label";
-        label.textContent = "Reproduzir no site";
-
-        facade.append(play, label);
-        facade.addEventListener("click", () => {
-          modalMedia.textContent = "";
-          const player = document.createElement("div");
-          player.className = "modal-player";
-          const iframe = document.createElement("iframe");
-          iframe.src = `https://www.tiktok.com/embed/v2/${id}?lang=pt-BR`;
-          iframe.title = `Vídeo do TikTok: ${work.title}`;
-          iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
-          iframe.allowFullscreen = true;
-          iframe.referrerPolicy = "strict-origin-when-cross-origin";
-          player.append(iframe);
-          modalMedia.append(player);
-        });
-
-        modalMedia.append(facade);
-        return;
-      }
+      const facade = document.createElement("button");
+      facade.type = "button";
+      facade.className = `modal-video-facade${labels.post ? " is-post" : ""}`;
+      facade.setAttribute("aria-label", labels.aria);
 
       if (work.cover) {
         const image = document.createElement("img");
         image.src = work.cover;
-        image.alt = work.title;
-        modalMedia.append(image);
+        image.alt = "";
+        facade.append(image);
       } else {
-        modalMedia.append(fallbackMedia(work));
+        facade.append(fallbackMedia(work));
       }
 
+      if (!labels.post) {
+        const play = document.createElement("span");
+        play.className = "facade-play";
+        play.setAttribute("aria-hidden", "true");
+        play.textContent = "▶";
+        facade.append(play);
+      }
+
+      const label = document.createElement("span");
+      label.className = "facade-label";
+      label.textContent = labels.label;
+
+      facade.append(label);
+      facade.addEventListener("click", () => {
+        modalMedia.textContent = "";
+        const player = document.createElement("div");
+        player.className = "modal-player";
+        const iframe = document.createElement("iframe");
+        iframe.src = embed.src;
+        iframe.title = labels.aria;
+        iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        player.append(iframe);
+        modalMedia.append(player);
+      });
+
+      modalMedia.append(facade);
+      return;
+    }
+
+    if (work.cover) {
+      const image = document.createElement("img");
+      image.src = work.cover;
+      image.alt = work.title;
+      modalMedia.append(image);
+    } else {
+      modalMedia.append(fallbackMedia(work));
+    }
+
+    if (work.category === "video") {
       if (work.tiktokUrl) {
         modalMedia.append(
           buildVideoNote(
@@ -495,16 +530,6 @@
       } else {
         modalMedia.append(buildVideoNote(work, "Vídeo em breve por aqui.", "", ""));
       }
-      return;
-    }
-
-    if (work.cover) {
-      const image = document.createElement("img");
-      image.src = work.cover;
-      image.alt = work.title;
-      modalMedia.append(image);
-    } else {
-      modalMedia.append(fallbackMedia(work));
     }
   }
 
@@ -553,15 +578,19 @@
       });
     }
 
-    if (work.tiktokUrl) {
-      actions.push({ href: work.tiktokUrl, label: "Ver no TikTok", external: true });
-    }
-    if (work.instagramUrl) {
-      actions.push({ href: work.instagramUrl, label: "Ver no Instagram", external: true });
-    }
-    if (work.externalUrl && work.externalUrl !== work.tiktokUrl && work.externalUrl !== work.instagramUrl) {
-      actions.push({ href: work.externalUrl, label: "Abrir projeto", external: true });
-    }
+    const linkedUrl = work.mediaUrl || "";
+    const linkedPlatform = work.mediaPlatform || "";
+    const seenLinks = new Set();
+    const pushLink = (href, label) => {
+      if (!href || seenLinks.has(href)) return;
+      seenLinks.add(href);
+      actions.push({ href, label, external: true });
+    };
+
+    pushLink(work.tiktokUrl || (linkedPlatform === "tiktok" ? linkedUrl : ""), "Ver no TikTok");
+    pushLink(work.instagramUrl || (linkedPlatform === "instagram" ? linkedUrl : ""), "Ver no Instagram");
+    if (linkedPlatform === "youtube" && linkedUrl) pushLink(linkedUrl, "Ver no YouTube");
+    pushLink(work.externalUrl, "Abrir projeto");
 
     actions.forEach((action) => {
       const link = document.createElement("a");

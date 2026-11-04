@@ -223,34 +223,205 @@ async function removeUpload(publicPath) {
 }
 
 const TIKTOK_ID_RE = /\/(?:video|photo)\/(\d{8,25})/;
+const UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
-async function resolveTikTokId(url) {
-  if (!url) return "";
+async function resolveTikTokTarget(url) {
   const direct = url.match(TIKTOK_ID_RE);
-  if (direct) return direct[1];
+  if (direct) return { id: direct[1], canonical: url };
 
   let hostname = "";
   try {
     hostname = new URL(url).hostname;
   } catch {
-    return "";
+    return { id: "", canonical: url };
   }
   const isTikTok = hostname === "tiktok.com" || hostname.endsWith(".tiktok.com");
-  if (!isTikTok) return "";
+  if (!isTikTok) return { id: "", canonical: url };
 
   try {
     const response = await fetch(url, {
       redirect: "follow",
       signal: AbortSignal.timeout(8000),
       headers: {
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "user-agent": UA,
         "accept-language": "pt-BR,pt;q=0.9,en;q=0.8",
       },
     });
     const match = response.url.match(TIKTOK_ID_RE);
-    return match ? match[1] : "";
+    return match ? { id: match[1], canonical: response.url } : { id: "", canonical: url };
   } catch {
+    return { id: "", canonical: url };
+  }
+}
+
+async function resolveTikTokId(url) {
+  if (!url) return "";
+  return (await resolveTikTokTarget(url)).id;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Mídia por link: TikTok, Instagram e YouTube                                */
+/* -------------------------------------------------------------------------- */
+
+function mediaPlatform(url) {
+  let host = "";
+  try {
+    host = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+  if (host === "tiktok.com" || host.endsWith(".tiktok.com")) return "tiktok";
+  if (host === "instagram.com" || host.endsWith(".instagram.com")) return "instagram";
+  if (host === "youtu.be" || host === "youtube.com" || host.endsWith(".youtube.com") || host === "youtube-nocookie.com") {
+    return "youtube";
+  }
+  return "";
+}
+
+function youtubeId(url) {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, "").replace(/^m\./, "");
+    if (host === "youtu.be") {
+      const id = parsed.pathname.slice(1).split("/")[0];
+      return /^[A-Za-z0-9_-]{6,}$/.test(id) ? id : "";
+    }
+    if (host === "youtube.com" || host === "youtube-nocookie.com") {
+      const queryId = parsed.searchParams.get("v");
+      if (queryId && /^[A-Za-z0-9_-]{6,}$/.test(queryId)) return queryId;
+      const pathId = parsed.pathname.match(/^\/(?:shorts|embed|live|v)\/([A-Za-z0-9_-]{6,})/);
+      if (pathId) return pathId[1];
+    }
+  } catch {
+    /* URL inválida */
+  }
+  return "";
+}
+
+function instagramTarget(url) {
+  try {
+    const parsed = new URL(url);
+    const match = parsed.pathname.match(/^\/(p|reel|reels|tv)\/([A-Za-z0-9_-]{5,})/);
+    if (!match) return { id: "", kind: "" };
+    const kind = match[1] === "reels" ? "reel" : match[1];
+    return { id: match[2], kind };
+  } catch {
+    return { id: "", kind: "" };
+  }
+}
+
+/**
+ * Lê um link de mídia e devolve tudo o que o site precisa para reproduzi-lo:
+ * plataforma, id, URL do player e de onde puxar a capa.
+ * `coverImage` é uma imagem direta (YouTube); `coverPage` precisa de metadados
+ * (TikTok e Instagram não publicam thumbnail estável).
+ */
+async function resolveMedia(rawUrl) {
+  const empty = { url: "", platform: "", id: "", embed: "", coverImage: "", coverPage: "" };
+  const url = cleanUrl(rawUrl);
+  if (!url) return empty;
+
+  const platform = mediaPlatform(url);
+  if (!platform) return empty;
+
+  if (platform === "tiktok") {
+    const target = await resolveTikTokTarget(url);
+    if (!target.id) return empty;
+    return {
+      url,
+      platform,
+      id: target.id,
+      embed: `https://www.tiktok.com/player/v1/${target.id}?embed_from=oembed&music_info=1&description=1`,
+      coverImage: "",
+      coverPage: target.canonical || url,
+    };
+  }
+
+  if (platform === "instagram") {
+    const target = instagramTarget(url);
+    if (!target.id) return empty;
+    return {
+      url,
+      platform,
+      id: target.id,
+      embed: `https://www.instagram.com/${target.kind}/${target.id}/embed/captioned/`,
+      coverImage: "",
+      coverPage: url,
+    };
+  }
+
+  const id = youtubeId(url);
+  if (!id) return empty;
+  return {
+    url,
+    platform,
+    id,
+    embed: `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`,
+    coverImage: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    coverPage: "",
+  };
+}
+
+/** URL da página de metadados usada pelo serviço de capa. */
+async function microlinkImage(pageUrl) {
+  try {
+    const response = await fetch(
+      `https://api.microlink.io/?url=${encodeURIComponent(pageUrl)}&meta=true`,
+      { headers: { "user-agent": UA, accept: "application/json" }, signal: AbortSignal.timeout(20000) }
+    );
+    if (!response.ok) return "";
+    const payload = await response.json();
+    const image = payload?.data?.image?.url;
+    return typeof image === "string" && image.startsWith("http") ? image : "";
+  } catch {
+    return "";
+  }
+}
+
+const COVER_EXT = new Map([
+  ["image/jpeg", ".jpg"],
+  ["image/png", ".png"],
+  ["image/webp", ".webp"],
+  ["image/avif", ".avif"],
+  ["image/gif", ".gif"],
+]);
+
+/**
+ * Baixa a capa remota uma única vez, no salvamento, e guarda em /uploads.
+ * URLs de CDN do TikTok/Instagram expiram em dias, então a cópia local é a que
+ * o site passa a servir. Melhor esforço: se falhar, a obra salva sem capa.
+ */
+async function pullCover(media) {
+  try {
+    const source = media.coverImage || (media.coverPage ? await microlinkImage(media.coverPage) : "");
+    if (!source) return "";
+
+    const response = await fetch(source, {
+      headers: { "user-agent": UA, accept: "image/*,*/*", referer: media.coverPage || "https://www.google.com/" },
+      redirect: "follow",
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!response.ok) return "";
+
+    const mime = (response.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+    if (!COVER_EXT.has(mime)) return "";
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (!buffer.length || buffer.length > 12 * 1024 * 1024) return "";
+
+    const filename = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}${COVER_EXT.get(mime)}`;
+    const target = path.join(UPLOAD_DIR, filename);
+    try {
+      await fs.promises.writeFile(target, buffer);
+      await store.persistFile({ path: target, filename, mimetype: mime });
+    } catch (error) {
+      await fs.promises.rm(target, { force: true }).catch(() => {});
+      throw error;
+    }
+    return `/uploads/${filename}`;
+  } catch (error) {
+    console.warn("Não foi possível puxar a capa do link:", error.message);
     return "";
   }
 }
@@ -325,22 +496,53 @@ async function buildWork(req, existing = null) {
     const tiktokUrl = cleanUrl(req.body.tiktokUrl);
     const tiktokId = tiktokUrl ? await resolveTikTokId(tiktokUrl) : "";
 
+    // Mídia colada por link: o servidor lê a plataforma e puxa a capa.
+    const mediaUrl = cleanUrl(req.body.mediaUrl);
+    const media = mediaUrl ? await resolveMedia(mediaUrl) : null;
+    if (mediaUrl && !media?.platform) {
+      throw new Error("Não consegui ler esse link. Cole uma URL do TikTok, Instagram ou YouTube.");
+    }
+
+    const mediaChanged = Boolean(media) && (existing?.mediaUrl || "") !== media.url;
+
     let cover = existing?.cover || "";
+    let coverFrom = existing?.coverFrom || "";
+
     if (uploadedCover) {
       if (cover) await removeUpload(cover);
       cover = uploadedCover;
+      coverFrom = "upload";
     } else if (isTruthy(req.body.removeCover) && cover) {
       await removeUpload(cover);
       cover = "";
+      coverFrom = "";
+    } else if (mediaChanged && coverFrom === "link" && cover) {
+      // Trocou o link: a capa antiga veio da plataforma e não serve mais.
+      await removeUpload(cover);
+      cover = "";
+      coverFrom = "";
     }
 
     if (req.file) await store.persistFile(req.file);
+
+    if (media && !cover && !isTruthy(req.body.removeCover)) {
+      const pulled = await pullCover(media);
+      if (pulled) {
+        cover = pulled;
+        coverFrom = "link";
+      }
+    }
 
     return {
       title,
       category,
       description: cleanText(req.body.description, 2200),
       cover,
+      coverFrom,
+      mediaUrl: media?.url || "",
+      mediaPlatform: media?.platform || "",
+      mediaId: media?.id || "",
+      mediaEmbed: media?.embed || "",
       tiktokUrl,
       tiktokId,
       externalUrl: cleanUrl(req.body.externalUrl),

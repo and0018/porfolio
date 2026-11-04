@@ -1497,6 +1497,11 @@ p {
   color: var(--paper-3);
 }
 
+/* Publicação (Instagram): não há vídeo para reproduzir, só para abrir. */
+.modal-video-facade.is-post .facade-play {
+  display: none;
+}
+
 .facade-label {
   position: absolute;
   left: 50%;

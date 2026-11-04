@@ -6,8 +6,10 @@ JSON ou em Postgres externo.
 
 - **Site:** apresenta os projetos publicados em uma galeria filtrável.
 - **Modal:** cada trabalho abre com descrição, metadados, link e CTA de contato.
-- **Vídeos:** links do TikTok viram player dentro do site.
-- **Instagram/artes:** capas de imagem com upload direto pelo painel.
+- **Mídia por link:** cole um link do TikTok, Instagram ou YouTube e o player abre
+  dentro do site, com a capa puxada da plataforma automaticamente.
+- **Uploads:** capas em JPG, PNG, WEBP, AVIF ou GIF, até 12 MB, para quem preferir
+  enviar a própria imagem.
 - **CTA:** botão flutuante e chamadas para o WhatsApp configurado.
 - **Admin:** cria, edita, publica, reordena e exclui projetos; edita todos os textos
   institucionais e exporta um backup em JSON.
@@ -82,26 +84,47 @@ continua usando arquivos locais.
 1. Acesse `/admin` e entre com a senha administrativa.
 2. Em **Projetos**, clique em **Novo projeto**.
 3. Preencha título, categoria, ano, descrição e cliente.
-4. Adicione uma capa (JPG, PNG, WEBP, AVIF ou GIF, até 12 MB) e/ou cole o link
-   de um vídeo do TikTok.
+4. Em **Mídia**, cole o link do TikTok, Instagram ou YouTube — a capa é puxada da
+   plataforma e o conteúdo abre dentro do site. Se preferir, envie a própria capa
+   (JPG, PNG, WEBP, AVIF ou GIF, até 12 MB); a imagem enviada substitui a capa
+   puxada do link.
 5. Marque **Publicado** para exibir na vitrine; use **Destaque** para o projeto
    aparecer no topo.
 6. Em **Configurações**, edite nome, bio, serviços, CTAs, WhatsApp, redes e SEO.
 7. A mesma tela permite **Exportar backup** e remover os projetos de exemplo
    (`demo: true`) de uma só vez.
 
-### TikTok
+### Mídia por link
 
-Cole a URL completa do vídeo, por exemplo:
+Em **Mídia**, cole a URL de uma publicação. O servidor reconhece a plataforma,
+extrai o id e grava a URL do player:
 
 ```text
 https://www.tiktok.com/@usuario/video/7106594312292453675
+https://www.instagram.com/p/CfwXgNprcSA/        (ou /reel/…)
+https://www.youtube.com/watch?v=dQw4w9WgXcQ     (ou youtu.be/…, /shorts/…)
 ```
 
-O servidor extrai o ID e monta o embed `https://www.tiktok.com/embed/v2/{id}`.
-Links curtos (`vm.tiktok.com`, `vt.tiktok.com`) são resolvidos no servidor.
-O player só carrega depois do clique em **Reproduzir no site**, o que mantém a
-página leve e evita cookies de terceiros antes da interação.
+| Plataforma | Player embutido |
+| --- | --- |
+| TikTok | `https://www.tiktok.com/player/v1/{id}` |
+| Instagram | `https://www.instagram.com/{p\|reel}/{id}/embed/captioned/` |
+| YouTube | `https://www.youtube.com/embed/{id}` |
+
+Links curtos (`vm.tiktok.com`, `vt.tiktok.com`, `youtu.be`) são resolvidos no
+servidor. O player só carrega depois do clique em **Reproduzir** (ou **Ver
+publicação**, no Instagram), o que mantém a página leve e evita cookies de
+terceiros antes da interação.
+
+**Capa:** ela é baixada **uma vez, no salvamento**, e guardada em `public/uploads`
+junto com a obra — o link de CDN do TikTok/Instagram expira em poucos dias, então
+o site serve a própria cópia. O YouTube usa `i.ytimg.com`; TikTok e Instagram usam
+a API de metadados do Microlink, que no plano gratuito tem **25 requisições por
+dia** — por isso a capa nunca é resolvida por visitante. Se a capa não puder ser
+obtida, a obra é salva mesmo assim e a vitrine mostra a marca d'água.
+
+Para substituir a capa puxada, basta enviar uma imagem no dropzone. Ao trocar o
+link por outro de outra publicação, a capa antiga é removida automaticamente.
 
 ### WhatsApp
 
@@ -203,7 +226,8 @@ persistente em `/var/data` e defina `DATA_DIR=/var/data` e
 - [ ] Trocar ou remover os projetos marcados como exemplo no painel.
 - [ ] Publicar o link do TikTok e o Instagram em **Configurações**.
 - [ ] Revisar WhatsApp, textos, serviços e SEO.
-- [ ] Testar login, upload, publicação e abertura de um vídeo no site.
+- [ ] Testar login, upload, publicação, mídia por link e abertura de um vídeo no
+      site.
 - [ ] Configurar `DATABASE_URL` (Render Free) ou disco persistente e testar um
       redeploy.
 
@@ -217,6 +241,10 @@ persistente em `/var/data` e defina `DATA_DIR=/var/data` e
 - Requisições de escrita do admin exigem o cabeçalho `x-admin-request: 1`
   (proteção simples contra CSRF).
 - Uploads aceitam apenas imagens, com limite de 12 MB por arquivo.
+- Links de mídia são lidos no servidor: a URL é validada contra TikTok, Instagram
+  e YouTube, o id é extraído por expressão regular e a URL do player é montada por
+  nós — o cliente apenas reproduz o endereço que veio do servidor. A capa remota
+  também é baixada pelo servidor, com limite de 12 MB e de 20 s por tentativa.
 - Cabeçalhos de segurança, `robots.txt` e página 404 personalizada inclusos.
 
 ---
